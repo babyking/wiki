@@ -15,7 +15,7 @@
     
     
       
-        <title>Linux入门 - Baby King's Wiki</title>
+        <title>Pyinstaller安装 - Baby King's Wiki</title>
       
     
     
@@ -81,7 +81,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Linux入门
+              Pyinstaller安装
             
           </span>
         </div>
@@ -155,8 +155,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../.." title="Baby King's Wiki" class="md-nav__link">
-      Baby King's Wiki
+    <a href="../../.." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -204,12 +204,10 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2" checked>
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2">
     
     <label class="md-nav__link" for="nav-2-2">
       Linux
@@ -231,6 +229,50 @@
           
           
 
+
+  <li class="md-nav__item">
+    <a href="../../linux/Linux%E5%85%A5%E9%97%A8/" title="Linux入门" class="md-nav__link">
+      Linux入门
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" checked>
+    
+    <label class="md-nav__link" for="nav-2-3">
+      Python
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Python" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Python
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
   
 
 
@@ -239,8 +281,8 @@
     <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
     
-    <a href="./" title="Linux入门" class="md-nav__link md-nav__link--active">
-      Linux入门
+    <a href="./" title="Pyinstaller安装" class="md-nav__link md-nav__link--active">
+      Pyinstaller安装
     </a>
     
   </li>
@@ -272,9 +314,13 @@
                   
                 
                 
-                  <h1>Linux入门</h1>
+                  <h1>Pyinstaller安装</h1>
                 
-                
+                <p>pyinstaller 在macOS使用时需要python使用如下参数进行编译</p>
+<div class="highlight"><pre><span></span><code>Some of 3rd party tool like PyInstaller might require CPython installation built with –enable-framework. You can build CPython with shared library as follows.
+
+$ env <span class="nv">PYTHON_CONFIGURE_OPTS</span><span class="o">=</span>”–enable-framework” pyenv install <span class="m">3</span>.5.0
+</code></pre></div>
                 
               
               
@@ -293,7 +339,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../../helloworld/" title="Hello,World" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../../linux/Linux%E5%85%A5%E9%97%A8/" title="Linux入门" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -302,7 +348,7 @@
                 <span class="md-footer-nav__direction">
                   上一页
                 </span>
-                Hello,World
+                Linux入门
               </div>
             </div>
           </a>
@@ -339,8 +385,6 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
-      
-        <script src="../../../js/cnzz-statistics.js"></script>
       
     
   </body>
