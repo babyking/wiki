@@ -9,7 +9,7 @@ extra:
 theme:
   name: 'material'
   palette:
-    primary: 'Light Blue'
+    primary: 'light blue'
     accent: 'Pink'
   feature:
     tabs: false
