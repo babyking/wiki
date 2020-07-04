@@ -40,8 +40,8 @@ $ git config credential.helper store
 
 ```config
 [user]
-	email = jintongbao@lakala.com
-	name = jintongbao
+	email = username@example.com
+	name = username
 [credential]
 	helper = store
 ```
