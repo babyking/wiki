@@ -1,0 +1,1853 @@
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>GDB Cheat Sheet - Baby King's Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#03a9f4">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="light-blue" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gdb-cheat-sheet" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../../.." title="Baby King's Wiki" class="md-header-nav__button md-logo" aria-label="Baby King's Wiki">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Baby King's Wiki
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              GDB Cheat Sheet
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Baby King's Wiki" class="md-nav__button md-logo" aria-label="Baby King's Wiki">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Baby King's Wiki
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      计算机
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="计算机" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        计算机
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-1" type="checkbox" id="nav-2-1">
+    
+    <label class="md-nav__link" for="nav-2-1">
+      CSS
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="CSS" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-1">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        CSS
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../CSS/clear%E7%90%86%E8%A7%A3%E9%94%99%E8%AF%AF/" title="Clear理解错误" class="md-nav__link">
+      Clear理解错误
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../CSS/css%E5%88%9D%E5%AD%A6%E8%80%85%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E7%9A%84%E6%A6%82%E5%BF%B5/" title="Css初学者需要理解的概念" class="md-nav__link">
+      Css初学者需要理解的概念
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../CSS/%E7%9B%92%E5%AD%90%E7%9A%84%E7%90%86%E8%A7%A3/" title="盒子的理解" class="md-nav__link">
+      盒子的理解
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../CSS/%E9%80%89%E6%8B%A9%E5%99%A8%E7%9A%84%E7%90%86%E8%A7%A3/" title="选择器的理解" class="md-nav__link">
+      选择器的理解
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2">
+    
+    <label class="md-nav__link" for="nav-2-2">
+      Emacs
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Emacs" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Emacs
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Emacs/Emacs%E5%BF%AB%E6%8D%B7%E9%94%AE/" title="Emacs快捷键" class="md-nav__link">
+      Emacs快捷键
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
+    
+    <label class="md-nav__link" for="nav-2-3">
+      Git
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Git" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Git
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Git/Git%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90/" title="Git参考资源" class="md-nav__link">
+      Git参考资源
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Git/Git%E5%A4%9A%E5%B8%90%E5%8F%B7%E8%AE%BE%E7%BD%AE/" title="Git多帐号设置" class="md-nav__link">
+      Git多帐号设置
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Git/Git%E5%AF%86%E7%A0%81/" title="Git密码" class="md-nav__link">
+      Git密码
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Git/Git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" title="Git常见问题" class="md-nav__link">
+      Git常见问题
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Git/%E6%97%A5%E5%B8%B8%E6%93%8D%E4%BD%9C/" title="日常操作" class="md-nav__link">
+      日常操作
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
+    
+    <label class="md-nav__link" for="nav-2-4">
+      Go
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Go" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Go
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Go/GoCheatSheet/" title="Go Cheat Sheet" class="md-nav__link">
+      Go Cheat Sheet
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Go/Go%E5%88%9D%E5%AD%A6%E8%80%85%E7%9A%84%E9%97%AE%E9%A2%98/" title="Go初学者的问题" class="md-nav__link">
+      Go初学者的问题
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5">
+    
+    <label class="md-nav__link" for="nav-2-5">
+      Java
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Java" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-5">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Java
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Java/%E5%BE%85%E6%95%B4%E7%90%86/" title="待整理" class="md-nav__link">
+      待整理
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-6" type="checkbox" id="nav-2-6">
+    
+    <label class="md-nav__link" for="nav-2-6">
+      Linux
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Linux" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-6">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Linux
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Linux/CentOS%E6%97%A5%E5%B8%B8/" title="CentOS日常" class="md-nav__link">
+      CentOS日常
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Linux/linux%E5%91%BD%E4%BB%A4%E5%88%86%E7%B1%BB%E5%8F%82%E8%80%83/" title="Linux命令分类参考" class="md-nav__link">
+      Linux命令分类参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Linux/%E5%AE%9E%E7%94%A8%E7%9A%84bash%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" title="实用的bash内置函数" class="md-nav__link">
+      实用的bash内置函数
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7">
+    
+    <label class="md-nav__link" for="nav-2-7">
+      Python
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Python" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-7">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Python
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Python/pyenv%E7%9A%84%E5%AE%89%E8%A3%85%E4%BF%A1%E6%81%AF/" title="Pyenv的安装信息" class="md-nav__link">
+      Pyenv的安装信息
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Python/pyinstaller%E5%AE%89%E8%A3%85/" title="Pyinstaller安装" class="md-nav__link">
+      Pyinstaller安装
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-8" type="checkbox" id="nav-2-8">
+    
+    <label class="md-nav__link" for="nav-2-8">
+      Ruby
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Ruby" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-8">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Ruby
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Ruby/Rails%E7%AC%94%E8%AE%B0/" title="Rails笔记" class="md-nav__link">
+      Rails笔记
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Ruby/Ruby%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Ruby的一些笔记" class="md-nav__link">
+      Ruby的一些笔记
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-9" type="checkbox" id="nav-2-9">
+    
+    <label class="md-nav__link" for="nav-2-9">
+      Shell
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Shell" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-9">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Shell
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Shell/Bash%E9%80%9F%E6%9F%A5%E5%8F%82%E8%80%83/" title="Bash速查参考" class="md-nav__link">
+      Bash速查参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Shell/Untitled/" title="Untitled" class="md-nav__link">
+      Untitled
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Shell/bash%E5%91%BD%E4%BB%A4%E5%AE%9E%E4%BE%8B/" title="Bash命令实例" class="md-nav__link">
+      Bash命令实例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Shell/shell%E5%88%9D%E5%AD%A6%E8%80%85%E5%8F%82%E8%80%83/" title="Shell初学者参考" class="md-nav__link">
+      Shell初学者参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Shell/%E5%A4%84%E7%90%86utf8/" title="处理utf8" class="md-nav__link">
+      处理utf8
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Shell/%E6%93%8D%E4%BD%9C%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8F%98%E9%87%8F/" title="操作多行字符串变量" class="md-nav__link">
+      操作多行字符串变量
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Shell/%E8%A7%A3%E8%AF%BBpyenv%E7%9A%84shell/" title="解读pyenv的shell" class="md-nav__link">
+      解读pyenv的shell
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-10" type="checkbox" id="nav-2-10">
+    
+    <label class="md-nav__link" for="nav-2-10">
+      Android
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Android" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-10">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Android
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../android/android%E7%B1%BB%E5%BA%93%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE/" title="Android类库类关系图" class="md-nav__link">
+      Android类库类关系图
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-11" type="checkbox" id="nav-2-11">
+    
+    <label class="md-nav__link" for="nav-2-11">
+      iOS
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="iOS" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-11">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        iOS
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../iOS/iPad%20Pro%E7%9A%84%E4%BD%BF%E7%94%A8/" title="iPad Pro的使用" class="md-nav__link">
+      iPad Pro的使用
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-12" type="checkbox" id="nav-2-12">
+    
+    <label class="md-nav__link" for="nav-2-12">
+      macOS
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="macOS" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-12">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        macOS
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../macOS/block_weak_strong/" title="\_\_block & \_\_weak & \_\_strong" class="md-nav__link">
+      \_\_block & \_\_weak & \_\_strong
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../macOS/macOS-iOS%E5%BC%80%E5%8F%91%E5%B8%B8%E7%94%A8%E7%9A%84%E6%A1%86%E6%9E%B6%E5%92%8C%E5%BA%93/" title="macOS iOS开发常用的框架和库" class="md-nav__link">
+      macOS iOS开发常用的框架和库
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../macOS/nsstring%E4%B8%BA%E4%BD%95%E8%A6%81%E7%94%A8copy/" title="NSString为何要用copy？而不是strong？" class="md-nav__link">
+      NSString为何要用copy？而不是strong？
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-13" type="checkbox" id="nav-2-13">
+    
+    <label class="md-nav__link" for="nav-2-13">
+      Mac软件
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Mac软件" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-13">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Mac软件
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../mac%E8%BD%AF%E4%BB%B6/Homebrew%E7%9B%B8%E5%85%B3/" title="Homebrew相关" class="md-nav__link">
+      Homebrew相关
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../mac%E8%BD%AF%E4%BB%B6/Keynote/" title="Keynote" class="md-nav__link">
+      Keynote
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../mac%E8%BD%AF%E4%BB%B6/Tmux%E6%8C%87%E5%8D%97/" title="Tmux指南" class="md-nav__link">
+      Tmux指南
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../mac%E8%BD%AF%E4%BB%B6/iTerm2%E7%9A%84%E8%AE%BE%E7%BD%AE/" title="iTerm2的设置" class="md-nav__link">
+      iTerm2的设置
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-14" type="checkbox" id="nav-2-14">
+    
+    <label class="md-nav__link" for="nav-2-14">
+      其他
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="其他" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-14">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        其他
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E5%85%B6%E4%BB%96/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9B%B8%E5%85%B3%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/" title="计算机相关资源整理" class="md-nav__link">
+      计算机相关资源整理
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-15" type="checkbox" id="nav-2-15">
+    
+    <label class="md-nav__link" for="nav-2-15">
+      前端
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="前端" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-15">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        前端
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E5%89%8D%E7%AB%AF/javascript%E4%B8%AD%E7%9A%84this/" title="Javascript中的this" class="md-nav__link">
+      Javascript中的this
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-16" type="checkbox" id="nav-2-16">
+    
+    <label class="md-nav__link" for="nav-2-16">
+      效率工具
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="效率工具" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-16">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        效率工具
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/Keyboard_Maestro%E7%9B%B8%E5%85%B3/" title="Keyboard Maestro相关" class="md-nav__link">
+      Keyboard Maestro相关
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/alfred%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%BD%BF%E7%94%A8/" title="Alfred环境变量使用" class="md-nav__link">
+      Alfred环境变量使用
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/togglecapslock%E5%BC%80%E5%85%B3%E6%8E%A7%E5%88%B6asdw%E6%96%B9%E5%90%91%E9%94%AE/" title="Togglecapslock开关控制asdw方向键" class="md-nav__link">
+      Togglecapslock开关控制asdw方向键
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-17" type="checkbox" id="nav-2-17">
+    
+    <label class="md-nav__link" for="nav-2-17">
+      数据库
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="数据库" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-17">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        数据库
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="MySQL常用命令" class="md-nav__link">
+      MySQL常用命令
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%95%B0%E6%8D%AE%E5%BA%93/Mysql%E4%B8%ADjoin%E7%9A%84%E5%8C%BA%E5%88%AB/" title="Mysql中join的区别" class="md-nav__link">
+      Mysql中join的区别
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-18" type="checkbox" id="nav-2-18">
+    
+    <label class="md-nav__link" for="nav-2-18">
+      正则表达式
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="正则表达式" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-18">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        正则表达式
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/%E6%AD%A3%E5%88%99%E7%AC%94%E8%AE%B0/" title="正则笔记" class="md-nav__link">
+      正则笔记
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-19" type="checkbox" id="nav-2-19" checked>
+    
+    <label class="md-nav__link" for="nav-2-19">
+      编译调试
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="编译调试" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-19">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        编译调试
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="GDB Cheat Sheet" class="md-nav__link md-nav__link--active">
+      GDB Cheat Sheet
+    </a>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-20" type="checkbox" id="nav-2-20">
+    
+    <label class="md-nav__link" for="nav-2-20">
+      编辑与编辑器
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="编辑与编辑器" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-20">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        编辑与编辑器
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/Markdown%E6%8B%BE%E9%81%97/" title="Markdown拾遗" class="md-nav__link">
+      Markdown拾遗
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/VIM%E5%8F%82%E8%80%83/" title="VIM参考" class="md-nav__link">
+      VIM参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/VSCode%E5%8F%82%E8%80%83/" title="VSCode参考" class="md-nav__link">
+      VSCode参考
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-21" type="checkbox" id="nav-2-21">
+    
+    <label class="md-nav__link" for="nav-2-21">
+      计算机网络
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="计算机网络" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-21">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        计算机网络
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Nginx%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AB%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Nginx为什么叫反向代理" class="md-nav__link">
+      Nginx为什么叫反向代理
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      音乐
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="音乐" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        音乐
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../%E9%9F%B3%E4%B9%90/%E4%BB%80%E4%B9%88%E6%98%AF%E8%B0%83%E6%80%A7/" title="什么是调性？什么是大小调式?!" class="md-nav__link">
+      什么是调性？什么是大小调式?!
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                <h1 id="gdb-cheat-sheet">GDB Cheat Sheet<a class="headerlink" href="#gdb-cheat-sheet" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="c1">##############################################################################</span>
+<span class="c1"># GDB CHEATSHEET (中文速查表)  -  by skywind (created on 2018/02/20)</span>
+<span class="c1"># Version: 8, Last Modified: 2018/02/28 17:13</span>
+<span class="c1"># https://github.com/skywind3000/awesome-cheatsheets</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 启动 GDB</span>
+<span class="c1">##############################################################################</span>
+
+gdb object                <span class="c1"># 正常启动，加载可执行</span>
+gdb object core           <span class="c1"># 对可执行 + core 文件进行调试</span>
+gdb object pid            <span class="c1"># 对正在执行的进程进行调试</span>
+gdb                       <span class="c1"># 正常启动，启动后需要 file 命令手动加载</span>
+gdb -tui                  <span class="c1"># 启用 gdb 的文本界面</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 帮助信息</span>
+<span class="c1">##############################################################################</span>
+
+<span class="nb">help</span>                      <span class="c1"># 列出命令分类</span>
+<span class="nb">help</span> running              <span class="c1"># 查看某个类别的帮助信息</span>
+<span class="nb">help</span> run                  <span class="c1"># 查看命令 run 的帮助</span>
+<span class="nb">help</span> info                 <span class="c1"># 列出查看程序运行状态相关的命令</span>
+<span class="nb">help</span> info line            <span class="c1"># 列出具体的一个运行状态命令的帮助</span>
+<span class="nb">help</span> show                 <span class="c1"># 列出 GDB 状态相关的命令</span>
+<span class="nb">help</span> show commands        <span class="c1"># 列出 show 命令的帮助</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 断点</span>
+<span class="c1">##############################################################################</span>
+
+<span class="nb">break</span> main                <span class="c1"># 对函数 main 设置一个断点，可简写为 b main</span>
+<span class="nb">break</span> <span class="m">101</span>                 <span class="c1"># 对源代码的行号设置断点，可简写为 b 101</span>
+<span class="nb">break</span> basic.c:101         <span class="c1"># 对源代码和行号设置断点</span>
+<span class="nb">break</span> basic.c:foo         <span class="c1"># 对源代码和函数名设置断点</span>
+<span class="nb">break</span> *0x00400448         <span class="c1"># 对内存地址 0x00400448 设置断点</span>
+info breakpoints          <span class="c1"># 列出当前的所有断点信息，可简写为 info break</span>
+delete <span class="m">1</span>                  <span class="c1"># 按编号删除一个断点</span>
+delete                    <span class="c1"># 删除所有断点</span>
+clear                     <span class="c1"># 删除在当前行的断点</span>
+clear <span class="k">function</span>            <span class="c1"># 删除函数断点</span>
+clear line                <span class="c1"># 删除行号断点</span>
+clear basic.c:101         <span class="c1"># 删除文件名和行号的断点</span>
+clear basic.c:main        <span class="c1"># 删除文件名和函数名的断点</span>
+clear *0x00400448         <span class="c1"># 删除内存地址的断点</span>
+disable <span class="m">2</span>                 <span class="c1"># 禁用某断点，但是部删除</span>
+<span class="nb">enable</span> <span class="m">2</span>                  <span class="c1"># 允许某个之前被禁用的断点，让它生效</span>
+tbreak <span class="k">function</span><span class="p">|</span>line      <span class="c1"># 临时断点</span>
+ignore <span class="o">{</span>id<span class="o">}</span> <span class="o">{</span>count<span class="o">}</span>       <span class="c1"># 忽略某断点 N-1 次</span>
+condition <span class="o">{</span>id<span class="o">}</span> <span class="o">{</span>expr<span class="o">}</span>     <span class="c1"># 条件断点，只有在条件生效时才发生</span>
+condition <span class="m">2</span> <span class="nv">i</span> <span class="o">==</span> <span class="m">20</span>       <span class="c1"># 2号断点只有在 i == 20 条件为真时才生效</span>
+watch <span class="o">{</span>expr<span class="o">}</span>              <span class="c1"># 对变量设置监视点</span>
+info watchpoints          <span class="c1"># 显示所有观察点</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 运行程序</span>
+<span class="c1">##############################################################################</span>
+
+run                       <span class="c1"># 运行程序</span>
+run <span class="o">{</span>args<span class="o">}</span>                <span class="c1"># 以某参数运行程序</span>
+run &lt; file                <span class="c1"># 以某文件为标准输入运行程序</span>
+run &lt; &lt;<span class="o">(</span>cmd<span class="o">)</span>              <span class="c1"># 以某命令的输出作为标准输入运行程序</span>
+run <span class="o">&lt;&lt;&lt;</span> <span class="k">$(</span>cmd<span class="k">)</span>            <span class="c1"># 以某命令的输出作为标准输入运行程序</span>
+<span class="nb">set</span> args <span class="o">{</span>args<span class="o">}</span> ...       <span class="c1"># 设置运行的参数</span>
+show args                 <span class="c1"># 显示当前的运行参数</span>
+cont                      <span class="c1"># 继续运行，可简写为 c</span>
+step                      <span class="c1"># 单步进入，碰到函数会进去</span>
+step <span class="o">{</span>count<span class="o">}</span>              <span class="c1"># 单步多少次</span>
+next                      <span class="c1"># 单步跳过，碰到函数不会进入</span>
+next <span class="o">{</span>count<span class="o">}</span>              <span class="c1"># 单步多少次</span>
+CTRL+C                    <span class="c1"># 发送 SIGINT 信号，中止当前运行的程序</span>
+attach <span class="o">{</span>process-id<span class="o">}</span>       <span class="c1"># 链接上当前正在运行的进程，开始调试</span>
+detach                    <span class="c1"># 断开进程链接</span>
+finish                    <span class="c1"># 结束当前函数的运行</span>
+<span class="k">until</span>                     <span class="c1"># 持续执行直到代码行号大于当前行号（跳出循环）</span>
+<span class="k">until</span> <span class="o">{</span>line<span class="o">}</span>              <span class="c1"># 持续执行直到执行到某行</span>
+<span class="nb">kill</span>                      <span class="c1"># 杀死当前运行的函数</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 栈帧</span>
+<span class="c1">##############################################################################</span>
+
+bt                        <span class="c1"># 打印 backtrace </span>
+frame                     <span class="c1"># 显示当前运行的栈帧</span>
+up                        <span class="c1"># 向上移动栈帧（向着 main 函数）</span>
+down                      <span class="c1"># 向下移动栈帧（远离 main 函数）</span>
+info locals               <span class="c1"># 打印帧内的相关变量</span>
+info args                 <span class="c1"># 打印函数的参数</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 代码浏览</span>
+<span class="c1">##############################################################################</span>
+
+list <span class="m">101</span>                  <span class="c1"># 显示第 101 行周围 10行代码</span>
+list <span class="m">1</span>,10                 <span class="c1"># 显示 1 到 10 行代码</span>
+list main                 <span class="c1"># 显示函数周围代码</span>
+list basic.c:main         <span class="c1"># 显示另外一个源代码文件的函数周围代码</span>
+list -                    <span class="c1"># 重复之前 10 行代码</span>
+list *0x22e4              <span class="c1"># 显示特定地址的代码</span>
+<span class="nb">cd</span> dir                    <span class="c1"># 切换当前目录</span>
+<span class="nb">pwd</span>                       <span class="c1"># 显示当前目录</span>
+search <span class="o">{</span>regexpr<span class="o">}</span>          <span class="c1"># 向前进行正则搜索</span>
+reverse-search <span class="o">{</span>regexp<span class="o">}</span>   <span class="c1"># 向后进行正则搜索</span>
+dir <span class="o">{</span>dirname<span class="o">}</span>             <span class="c1"># 增加源代码搜索路径</span>
+dir                       <span class="c1"># 复位源代码搜索路径（清空）</span>
+show directories          <span class="c1"># 显示源代码路径</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 浏览数据</span>
+<span class="c1">##############################################################################</span>
+
+print <span class="o">{</span>expression<span class="o">}</span>        <span class="c1"># 打印表达式，并且增加到打印历史</span>
+print /x <span class="o">{</span>expression<span class="o">}</span>     <span class="c1"># 十六进制输出，print 可以简写为 p</span>
+print array<span class="o">[</span>i<span class="o">]</span>@count      <span class="c1"># 打印数组范围</span>
+print $                   <span class="c1"># 打印之前的变量</span>
+print *<span class="nv">$-</span>&gt;next            <span class="c1"># 打印 list</span>
+print <span class="nv">$1</span>                  <span class="c1"># 输出打印历史里第一条</span>
+print ::gx                <span class="c1"># 将变量可视范围（scope）设置为全局</span>
+print <span class="s1">&#39;basic.c&#39;</span>::gx       <span class="c1"># 打印某源代码里的全局变量，(gdb 4.6)</span>
+print /x <span class="p">&amp;</span>main            <span class="c1"># 打印函数地址</span>
+x *0x11223344             <span class="c1"># 显示给定地址的内存数据</span>
+x /nfu <span class="o">{</span>address<span class="o">}</span>          <span class="c1"># 打印内存数据，n是多少个，f是格式，u是单位大小</span>
+x /10xb *0x11223344       <span class="c1"># 按十六进制打印内存地址 0x11223344 处的十个字节</span>
+x/x <span class="p">&amp;</span>gx                   <span class="c1"># 按十六进制打印变量 gx，x和斜杆后参数可以连写</span>
+x/4wx <span class="p">&amp;</span>main               <span class="c1"># 按十六进制打印位于 main 函数开头的四个 long </span>
+x/gf <span class="p">&amp;</span>gd1                 <span class="c1"># 打印 double 类型</span>
+<span class="nb">help</span> x                    <span class="c1"># 查看关于 x 命令的帮助</span>
+info locals               <span class="c1"># 打印本地局部变量</span>
+info functions <span class="o">{</span>regexp<span class="o">}</span>   <span class="c1"># 打印函数名称</span>
+info variables <span class="o">{</span>regexp<span class="o">}</span>   <span class="c1"># 打印全局变量名称</span>
+ptype name                <span class="c1"># 查看类型定义，比如 ptype FILE，查看 FILE 结构体定义</span>
+whatis <span class="o">{</span>expression<span class="o">}</span>       <span class="c1"># 查看表达式的类型</span>
+<span class="nb">set</span> <span class="nv">var</span> <span class="o">=</span> <span class="o">{</span>expression<span class="o">}</span>    <span class="c1"># 变量赋值</span>
+display <span class="o">{</span>expression<span class="o">}</span>      <span class="c1"># 在单步指令后查看某表达式的值</span>
+undisplay                 <span class="c1"># 删除单步后对某些值的监控</span>
+info display              <span class="c1"># 显示监视的表达式</span>
+show values               <span class="c1"># 查看记录到打印历史中的变量的值 (gdb 4.0)</span>
+info <span class="nb">history</span>              <span class="c1"># 查看打印历史的帮助 (gdb 3.5)</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 目标文件操作</span>
+<span class="c1">##############################################################################</span>
+
+file <span class="o">{</span>object<span class="o">}</span>             <span class="c1"># 加载新的可执行文件供调试</span>
+file                      <span class="c1"># 放弃可执行和符号表信息</span>
+symbol-file <span class="o">{</span>object<span class="o">}</span>      <span class="c1"># 仅加载符号表</span>
+exec-file <span class="o">{</span>object<span class="o">}</span>        <span class="c1"># 指定用于调试的可执行文件（非符号表）</span>
+core-file <span class="o">{</span>core<span class="o">}</span>          <span class="c1"># 加载 core 用于分析</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 信号控制</span>
+<span class="c1">##############################################################################</span>
+
+info signals              <span class="c1"># 打印信号设置</span>
+handle <span class="o">{</span>signo<span class="o">}</span> <span class="o">{</span>actions<span class="o">}</span>  <span class="c1"># 设置信号的调试行为</span>
+handle INT print          <span class="c1"># 信号发生时打印信息</span>
+handle INT noprint        <span class="c1"># 信号发生时不打印信息</span>
+handle INT stop           <span class="c1"># 信号发生时中止被调试程序</span>
+handle INT nostop         <span class="c1"># 信号发生时不中止被调试程序</span>
+handle INT pass           <span class="c1"># 调试器接获信号，不让程序知道</span>
+handle INT nopass         <span class="c1"># 调试起不接获信号</span>
+signal signo              <span class="c1"># 继续并将信号转移给程序</span>
+signal <span class="m">0</span>                  <span class="c1"># 继续但不把信号给程序</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 线程调试</span>
+<span class="c1">##############################################################################</span>
+
+info threads              <span class="c1"># 查看当前线程和 id</span>
+thread <span class="o">{</span>id<span class="o">}</span>               <span class="c1"># 切换当前调试线程为指定 id 的线程</span>
+<span class="nb">break</span> <span class="o">{</span>line<span class="o">}</span> thread all   <span class="c1"># 所有线程在指定行号处设置断点</span>
+thread apply <span class="o">{</span>id..<span class="o">}</span> cmd   <span class="c1"># 指定多个线程共同执行 gdb 命令</span>
+thread apply all cmd      <span class="c1"># 所有线程共同执行 gdb 命令</span>
+<span class="nb">set</span> schedule-locking ?    <span class="c1"># 调试一个线程时，其他线程是否执行，off|on|step</span>
+<span class="nb">set</span> non-stop on/off       <span class="c1"># 调试一个线程时，其他线程是否运行</span>
+<span class="nb">set</span> pagination on/off     <span class="c1"># 调试一个线程时，分页是否停止</span>
+<span class="nb">set</span> target-async on/off   <span class="c1"># 同步或者异步调试，是否等待线程中止的信息</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 进程调试</span>
+<span class="c1">##############################################################################</span>
+
+info inferiors                       <span class="c1"># 查看当前进程和 id</span>
+inferior <span class="o">{</span>id<span class="o">}</span>                        <span class="c1"># 切换某个进程</span>
+<span class="nb">kill</span> inferior <span class="o">{</span>id...<span class="o">}</span>                <span class="c1"># 杀死某个进程</span>
+<span class="nb">set</span> detach-on-fork on/off            <span class="c1"># 设置当进程调用fork时gdb是否同时调试父子进程</span>
+<span class="nb">set</span> follow-fork-mode parent/child    <span class="c1"># 设置当进程调用fork时是否进入子进程</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 汇编调试</span>
+<span class="c1">##############################################################################</span>
+
+info registers            <span class="c1"># 打印普通寄存器</span>
+info all-registers        <span class="c1"># 打印所有寄存器</span>
+print/x <span class="nv">$pc</span>               <span class="c1"># 打印单个寄存器</span>
+stepi                     <span class="c1"># 指令级别单步进入，可以简写为 si</span>
+nexti                     <span class="c1"># 指令级别单步跳过，可以简写为 ni</span>
+display/i <span class="nv">$pc</span>             <span class="c1"># 监控寄存器（每条单步完以后会自动打印值）</span>
+x/x <span class="p">&amp;</span>gx                   <span class="c1"># 十六进制打印变量</span>
+info line <span class="m">22</span>              <span class="c1"># 打印行号为 22 的内存地址信息</span>
+info line *0x2c4e         <span class="c1"># 打印给定内存地址对应的源代码和行号信息</span>
+disassemble <span class="o">{</span>addr<span class="o">}</span>        <span class="c1"># 对地址进行反汇编，比如 disassemble 0x2c4e</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 历史信息</span>
+<span class="c1">##############################################################################</span>
+
+show commands             <span class="c1"># 显示历史命令 (gdb 4.0)</span>
+info editing              <span class="c1"># 显示历史命令 (gdb 3.5)</span>
+ESC-CTRL-J                <span class="c1"># 切换到 Vi 命令行编辑模式</span>
+<span class="nb">set</span> <span class="nb">history</span> expansion on  <span class="c1"># 允许类 c-shell 的历史</span>
+<span class="nb">break</span> class::member       <span class="c1"># 在类成员处设置断点</span>
+list class:member         <span class="c1"># 显示类成员代码</span>
+ptype class               <span class="c1"># 查看类包含的成员</span>
+print *this               <span class="c1"># 查看 this 指针</span>
+rbreak <span class="o">{</span>regexpr<span class="o">}</span>          <span class="c1"># 匹配正则的函数前断点，如 ex_* 将断点 ex_ 开头的函数</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># 其他命令</span>
+<span class="c1">##############################################################################</span>
+
+define <span class="nb">command</span> ... end    <span class="c1"># 定义用户命令</span>
+&lt;<span class="k">return</span>&gt;                  <span class="c1"># 直接按回车执行上一条指令</span>
+shell <span class="o">{</span>command<span class="o">}</span> <span class="o">[</span>args<span class="o">]</span>    <span class="c1"># 执行 shell 命令</span>
+<span class="nb">source</span> <span class="o">{</span>file<span class="o">}</span>             <span class="c1"># 从文件加载 gdb 命令</span>
+quit                      <span class="c1"># 退出 gdb</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># GDB 前端</span>
+<span class="c1">##############################################################################</span>
+
+gdb-tui                   使用 gdb -tui 启动
+cgdb                      http://cgdb.github.io/
+emacs                     http://gnu.org/software/emacs
+gdbgui                    https://github.com/cs01/gdbgui
+
+GDB 图形化前端评测        http://www.skywind.me/blog/archives/2036
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># References</span>
+<span class="c1">##############################################################################</span>
+
+https://sourceware.org/gdb/current/onlinedocs/gdb/
+https://kapeli.com/cheat_sheets/GDB.docset/Contents/Resources/Documents/index
+http://www.yolinux.com/TUTORIALS/GDB-Commands.html
+https://gist.github.com/rkubik/b96c23bd8ed58333de37f2b8cd052c30
+http://security.cs.pub.ro/hexcellents/wiki/kb/toolset/gdb
+
+
+<span class="c1"># vim: set ts=4 sw=4 tw=0 noet ft=gdb:</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../../%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/%E6%AD%A3%E5%88%99%E7%AC%94%E8%AE%B0/" title="正则笔记" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                正则笔记
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../../%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/Markdown%E6%8B%BE%E9%81%97/" title="Markdown拾遗" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                Markdown拾遗
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
