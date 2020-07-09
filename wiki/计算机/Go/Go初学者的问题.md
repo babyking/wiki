@@ -45,6 +45,47 @@ import 是目录的路径名称
 
 
 
+### Go中struct匿名属性
+
+Go语言中struct的属性可以没有名字而只有类型，使用时类型即为属性名。（因此，一个struct中同一个类型的匿名属性只能有一个）
+
+type PersonC struct {
+	id      int
+	country string
+}
+
+//匿名属性
+type Worker struct {
+	//如果Worker有属性id,则worker.id表示Worker对象的id
+	//如果Worker没有属性id,则worker.id表示Worker对象中的PersonC的id
+	id   int
+	name string
+	int
+	*PersonC
+}
+
+func structTest0404() {
+	w := &Worker{}
+	w.id = 201
+	w.name = "Smith"
+	w.int = 49
+	w.PersonC = &PersonC{100001, "China"}
+
+	fmt.Printf("name:%s,int:%d\n", w.name, w.int)
+	fmt.Printf("inner PersonC,id:%d,country:%s\n",
+		w.PersonC.id, w.PersonC.country)
+	
+	fmt.Printf("worker.id:%d,personC.id:%d\n", w.id, w.PersonC.id)
+	/*output:
+	name:Smith,int:49
+	inner PersonC,id:100001,country:China
+	worker.id:201,personC.id:100001
+	*/
+}
+
+
+
+
 ## 使用 Go Modules 后，不再需要以下内容：
 
 不用再定义 GOPATH （这里指的是 go build 、 go install 等等 go 命令。IDE 插件目前还是需要 GOPATH）

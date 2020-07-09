@@ -1,7 +1,3 @@
-pip常用
-
-
-
 ### pip镜像
 
 清华：https://pypi.tuna.tsinghua.edu.cn/simple
@@ -17,8 +13,8 @@ pip常用
 豆瓣：http://pypi.douban.com/simple/
 
 临时使用：
-可以在使用pip的时候加参数-i https://pypi.tuna.tsinghua.edu.cn/simple
-例如：pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pyspider，这样就会从清华这边的镜像去安装pyspider库。
+可以在使用pip的时候加参数 `-i https://pypi.tuna.tsinghua.edu.cn/simple`
+例如：`pip install -i https://pypi.tuna.tsinghua.edu.cn/simple  pyspider`，这样就会从清华这边的镜像去安装pyspider库。
 
 
 
@@ -34,4 +30,4 @@ pip常用
 
 升级指定版本
 
-`pip upgrade packagename==`
+`pip upgrade packagename==版本号`
