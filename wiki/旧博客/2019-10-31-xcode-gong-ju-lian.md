@@ -82,7 +82,7 @@ $ xcodebuild -workspace NSHipster.xcworkspace -scheme "NSHipster"
 
 ### genstrings
 
-`genstrings` 工具从指定的C或者Objective-C源文件生成 `.strings` 文件。在不同的 `locale` 本地化应用程序使用 `.strings` 文件。在苹果的 `Cocoa Core Competencies` 中的 [Internationalization]([https://developer.apple.com/library/mac/documentation/general/conceptual/devpedia-cocoacore/-](https://link.jianshu.com?t=https://developer.apple.com/library/mac/documentation/general/conceptual/devpedia-cocoacore/-) Internationalization.html) 有相关的描述。
+`genstrings` 工具从指定的C或者Objective-C源文件生成 `.strings` 文件。在不同的 `locale` 本地化应用程序使用 `.strings` 文件。在苹果的 `Cocoa Core Competencies` 中的 [Internationalization](https://developer.apple.com/library/archive/documentation/General/Conceptual/DevPedia-CocoaCore/Internationalization.html#//apple_ref/doc/uid/TP40008195-CH23-SW1) 有相关的描述。
 
 ```bash
 $ genstrings -a /path/to/source/files/*.m
