@@ -1,0 +1,3239 @@
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>深度解密Go语言之Slice(转载)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#03a9f4">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="light-blue" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#slice" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Baby King's Wiki" class="md-header-nav__button md-logo" aria-label="Baby King's Wiki">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Baby King's Wiki
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              深度解密Go语言之Slice(转载)
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Baby King's Wiki" class="md-nav__button md-logo" aria-label="Baby King's Wiki">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Baby King's Wiki
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      旧博客
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="旧博客" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        旧博客
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../0000-00-00-t/" title="一个人的推" class="md-nav__link">
+      一个人的推
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2017-03-11-mac-soft-list/" title="Mac常用软件备忘" class="md-nav__link">
+      Mac常用软件备忘
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2018-06-13-ru-he-zi-ding-yi-APP-shi-yong-yu-yan/" title="指定APP启动默认语言" class="md-nav__link">
+      指定APP启动默认语言
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2018-10-08-degitec/" title="Degitech Trio+使用感受" class="md-nav__link">
+      Degitech Trio+使用感受
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2018-10-21-duet2-ba-gong-le/" title="Duet2罢工了" class="md-nav__link">
+      Duet2罢工了
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-00-00-t/" title="一个人的推" class="md-nav__link">
+      一个人的推
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-01-10-xin-de-zhuo-mian/" title="新的桌面" class="md-nav__link">
+      新的桌面
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-01-15-guan-yu-jian-pan-de-yi-xie-shi/" title="关于键盘的一些事" class="md-nav__link">
+      关于键盘的一些事
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-01-15-you-shi-ni-wang-zhe-tian-kong/" title="有时你望着天空" class="md-nav__link">
+      有时你望着天空
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-06-26-kuai-su-ting-yin-ji-pu-de-yi-ge-fang-fa-/" title="快速听音记谱的一个方法" class="md-nav__link">
+      快速听音记谱的一个方法
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-07-18-ru-he-li-jie-karabiner-de-zhe-ji-ge-shi-jian-/" title="karabiner的alone,held_down,delayed_action这几个事件" class="md-nav__link">
+      karabiner的alone,held_down,delayed_action这几个事件
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-09-12-shuo-shuo-swift-fang-fa-li-de-can-shu-biao-qian-/" title="说说swift方法里的参数标签" class="md-nav__link">
+      说说swift方法里的参数标签
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-09-24-about/" title="about" class="md-nav__link">
+      about
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-09-26-ruby-de-irb-xia-fang-xiang-jian-chu-xian/" title="ruby的irb下方向键出现^[[A" class="md-nav__link">
+      ruby的irb下方向键出现^[[A
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-01-ji-ju-hua-li-jie-ruby-de-dan-jian-lei/" title="几句话理解ruby的单件类" class="md-nav__link">
+      几句话理解ruby的单件类
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-09-qq-for-mac-de-kuai-jie-jian-chong-tu/" title="QQ for Mac的快捷键冲突" class="md-nav__link">
+      QQ for Mac的快捷键冲突
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-10-liang-zhang-tu-li-jie-js-prototype/" title="两张图理解javascript prototype" class="md-nav__link">
+      两张图理解javascript prototype
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-12-Mac-chu-shi-hua/" title="Mac初始化" class="md-nav__link">
+      Mac初始化
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-14-fork-vs-source-vs-exec/" title="fork vs source vs exec" class="md-nav__link">
+      fork vs source vs exec
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-14-keynote-shi-yong-bi-ji/" title="Keynote使用笔记" class="md-nav__link">
+      Keynote使用笔记
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-22-Mac-jie-tu-shi-yong-zhi-nan/" title="Mac截图使用指南" class="md-nav__link">
+      Mac截图使用指南
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-22-PostgreSQL-zai-macOS-xia-de-an-zhuang/" title="PostgreSQL在macOS下的安装" class="md-nav__link">
+      PostgreSQL在macOS下的安装
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-22-kong-zhi-macOS-de-kai-ji-qi-dong/" title="控制macOS的开机启动(转载)" class="md-nav__link">
+      控制macOS的开机启动(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-23-PostgreSQL-an-zhuang-xin-xi/" title="PostgreSQL安装信息" class="md-nav__link">
+      PostgreSQL安装信息
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-29-__strong-he-__weak/" title="__strong和__weak" class="md-nav__link">
+      __strong和__weak
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-29-li-jie-gcd/" title="理解GCD" class="md-nav__link">
+      理解GCD
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-31-sheng-ji-dao-macos10.15-hou-de-ruo-gan-wen-ti/" title="升级到macOS10.15后的若干问题" class="md-nav__link">
+      升级到macOS10.15后的若干问题
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-31-xcode-gong-ju-lian/" title="xcode工具链(转载)" class="md-nav__link">
+      xcode工具链(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-10-31-zhi-zuo-dmg-an-zhuang-pan/" title="制作DMG安装盘" class="md-nav__link">
+      制作DMG安装盘
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-01-cocoapods-de-an-zhuang-yu-shi-yong/" title="CocoaPods的安装与使用(转载)" class="md-nav__link">
+      CocoaPods的安装与使用(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-02-gang-qin-san-ge-ta-ban-de-zuo-yong/" title="钢琴三个踏板的作用" class="md-nav__link">
+      钢琴三个踏板的作用
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-06-an-zhuang-spleeter/" title="安装Spleeter" class="md-nav__link">
+      安装Spleeter
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-09-na-shi-wo-bu-zhi-dao-de-ming-ling/" title="那是我不知道的命令" class="md-nav__link">
+      那是我不知道的命令
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-13-chromedriver-ban-ben-de-wen-ti/" title="ChromeDriver版本的问题" class="md-nav__link">
+      ChromeDriver版本的问题
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-14-xin-wan-ju/" title="新玩具" class="md-nav__link">
+      新玩具
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-15-le-jie-framework-mu-lu-jie-gou/" title="了解Framework目录结构" class="md-nav__link">
+      了解Framework目录结构
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-16-guan-yu-crystal-yu-yan-de-yi-xie-ji-lu/" title="关于crystal语言的一些记录" class="md-nav__link">
+      关于crystal语言的一些记录
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-18-shi-yong-homebrew-wei-hu-zi-ji-de-ruan-jian-cang-ku/" title="使用 Homebrew 维护自己的软件仓库(转载)" class="md-nav__link">
+      使用 Homebrew 维护自己的软件仓库(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-25-nektar-se25-shi-yong-xiao-ji/" title="Nektar se25使用小记" class="md-nav__link">
+      Nektar se25使用小记
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-27-shou-ji-kong-zhi-dian-nao-zhi-hang-ren-wu/" title="手机控制电脑执行任务" class="md-nav__link">
+      手机控制电脑执行任务
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-11-28-yi-ge-xiao-xu-qiu-de-yan-hua/" title="一个小需求的演化" class="md-nav__link">
+      一个小需求的演化
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-12-09-go-yu-yan-can-shu-chuan-di-shi-chuan-zhi-hai-shi-chuan-yin-yong/" title="Go语言参数传递是传值还是传引用(转载)" class="md-nav__link">
+      Go语言参数传递是传值还是传引用(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="深度解密Go语言之Slice(转载)" class="md-nav__link md-nav__link--active">
+      深度解密Go语言之Slice(转载)
+    </a>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-12-10-shi-yong-ffmpeg-fen-li-shi-pin-liu-he-yin-pin-liu/" title="使用 ffmpeg 分离视频流和音频流(转载)" class="md-nav__link">
+      使用 ffmpeg 分离视频流和音频流(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-12-18-xiao-lv-ruan-jian-de-ling-xing-si-kao/" title="效率软件的零星思考" class="md-nav__link">
+      效率软件的零星思考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-12-25-git-zhong-tag-yu-release-de-chuang-jian-yi-ji-liang-zhe-de-qu-bie/" title="git中tag与release的创建以及两者的区别(转载)" class="md-nav__link">
+      git中tag与release的创建以及两者的区别(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2019-12-25-lan-se-de-qi-qiu/" title="蓝色的气球" class="md-nav__link">
+      蓝色的气球
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-02-18-liang-ge-duan-gang-de-yi-si/" title="两个短杠的意思" class="md-nav__link">
+      两个短杠的意思
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-02-24-rbenv-wu-fa-an-zhuang-de-wen-ti/" title="rbenv无法安装的问题" class="md-nav__link">
+      rbenv无法安装的问题
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-02-24-ru-he-jie-jue-bundle-install-tai-man-de-wen-ti/" title="如何解决bundle install太慢的问题" class="md-nav__link">
+      如何解决bundle install太慢的问题
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-03-19-flutter-cha-jian-yu-dao-de-cocoapods-wu-fa-an-zhuang-de-wen-ti/" title="flutter插件遇到的cocoapods无法安装的问题" class="md-nav__link">
+      flutter插件遇到的cocoapods无法安装的问题
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-03-25-pi-liang-shun-xu-copy-zi-fu-chuan/" title="批量顺序copy字符串" class="md-nav__link">
+      批量顺序copy字符串
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-03-30-refusing-to-merge-unrelated-histories/" title="refusing to merge unrelated histories" class="md-nav__link">
+      refusing to merge unrelated histories
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-03-30-you-ping-guo-ti-xing-app-bug-xiang-dao-de/" title="由苹果提醒APP bug想到的" class="md-nav__link">
+      由苹果提醒APP bug想到的
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-05-14-reminders-helper-yin-si-zheng-ce-en/" title="Reminders Helper 隐私政策" class="md-nav__link">
+      Reminders Helper 隐私政策
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-05-14-reminders-helper-yin-si-zheng-ce/" title="Reminders Helper 隐私政策" class="md-nav__link">
+      Reminders Helper 隐私政策
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-05-18-quan-xin-an-zhuang-she-zhi-macos-ji-lu/" title="全新安装设置macOS记录" class="md-nav__link">
+      全新安装设置macOS记录
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-05-18-texttext-yin-si-zheng-ce/" title="TextText! 隐私政策" class="md-nav__link">
+      TextText! 隐私政策
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-05-19-gei-ping-guo-ti-xing-app-pei-ge-zhu-shou/" title="给苹果提醒APP配个助手" class="md-nav__link">
+      给苹果提醒APP配个助手
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-05-25-yi-dong-ying-pan-huai-le/" title="移动硬盘坏了" class="md-nav__link">
+      移动硬盘坏了
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-05-27-zhe-me-duo-nian-le-%2Cqq-mei-fa-xian-zhe-ge-wen-ti-ma/" title="这么多年了,QQ没发现这个问题吗" class="md-nav__link">
+      这么多年了,QQ没发现这个问题吗
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-06-02-xu-ni-da-yin-ji/" title="虚拟打印机" class="md-nav__link">
+      虚拟打印机
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-06-11-zhe-duan-shell-zen-me-li-jie/" title="这段shell怎么理解" class="md-nav__link">
+      这段shell怎么理解
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-07-01-reminders-helper-privacy-policy/" title="Reminders Helper Privacy Policy" class="md-nav__link">
+      Reminders Helper Privacy Policy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2020-07-01-texttext-privacy-policy/" title="TextText Privacy Policy" class="md-nav__link">
+      TextText Privacy Policy
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      计算机
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="计算机" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        计算机
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1">
+    
+    <label class="md-nav__link" for="nav-3-1">
+      CSS
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="CSS" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-1">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        CSS
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/CSS/clear%E7%90%86%E8%A7%A3%E9%94%99%E8%AF%AF/" title="Clear理解错误" class="md-nav__link">
+      Clear理解错误
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/CSS/css%E5%88%9D%E5%AD%A6%E8%80%85%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E7%9A%84%E6%A6%82%E5%BF%B5/" title="Css初学者需要理解的概念" class="md-nav__link">
+      Css初学者需要理解的概念
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/CSS/%E7%9B%92%E5%AD%90%E7%9A%84%E7%90%86%E8%A7%A3/" title="盒子的理解" class="md-nav__link">
+      盒子的理解
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/CSS/%E9%80%89%E6%8B%A9%E5%99%A8%E7%9A%84%E7%90%86%E8%A7%A3/" title="选择器的理解" class="md-nav__link">
+      选择器的理解
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2">
+    
+    <label class="md-nav__link" for="nav-3-2">
+      Emacs
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Emacs" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Emacs
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Emacs/Emacs%E5%BF%AB%E6%8D%B7%E9%94%AE/" title="Emacs快捷键" class="md-nav__link">
+      Emacs快捷键
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3">
+    
+    <label class="md-nav__link" for="nav-3-3">
+      Git
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Git" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Git
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Git/Git%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90/" title="Git参考资源" class="md-nav__link">
+      Git参考资源
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Git/Git%E5%A4%9A%E5%B8%90%E5%8F%B7%E8%AE%BE%E7%BD%AE/" title="Git多帐号设置" class="md-nav__link">
+      Git多帐号设置
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Git/Git%E5%AF%86%E7%A0%81/" title="Git密码" class="md-nav__link">
+      Git密码
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Git/Git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" title="Git常见问题" class="md-nav__link">
+      Git常见问题
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Git/%E6%97%A5%E5%B8%B8%E6%93%8D%E4%BD%9C/" title="日常操作" class="md-nav__link">
+      日常操作
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-4" type="checkbox" id="nav-3-4">
+    
+    <label class="md-nav__link" for="nav-3-4">
+      Go
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Go" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Go
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Go/GoCheatSheet/" title="Go Cheat Sheet" class="md-nav__link">
+      Go Cheat Sheet
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Go/Go%E5%88%9D%E5%AD%A6%E8%80%85%E7%9A%84%E9%97%AE%E9%A2%98/" title="Go初学者的问题" class="md-nav__link">
+      Go初学者的问题
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-5" type="checkbox" id="nav-3-5">
+    
+    <label class="md-nav__link" for="nav-3-5">
+      Java
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Java" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-5">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Java
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Java/%E5%BE%85%E6%95%B4%E7%90%86/" title="待整理" class="md-nav__link">
+      待整理
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-6" type="checkbox" id="nav-3-6">
+    
+    <label class="md-nav__link" for="nav-3-6">
+      Linux
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Linux" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-6">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Linux
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Linux/CentOS%E6%97%A5%E5%B8%B8/" title="CentOS日常" class="md-nav__link">
+      CentOS日常
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Linux/linux%E5%91%BD%E4%BB%A4%E5%88%86%E7%B1%BB%E5%8F%82%E8%80%83/" title="Linux命令分类参考" class="md-nav__link">
+      Linux命令分类参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Linux/%E5%AE%9E%E7%94%A8%E7%9A%84bash%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" title="实用的bash内置函数" class="md-nav__link">
+      实用的bash内置函数
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-7" type="checkbox" id="nav-3-7">
+    
+    <label class="md-nav__link" for="nav-3-7">
+      Python
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Python" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-7">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Python
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Python/mkdocs%E5%AF%BC%E5%87%BApdf/" title="Mkdocs导出pdf" class="md-nav__link">
+      Mkdocs导出pdf
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Python/pip%E5%B8%B8%E7%94%A8%E5%8F%82%E8%80%83/" title="Pip常用参考" class="md-nav__link">
+      Pip常用参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Python/pip%E9%94%99%E8%AF%AF%20missing%20dependencies%20for%20SOCKS%20support/" title="pip错误 missing dependencies for SOCKS support" class="md-nav__link">
+      pip错误 missing dependencies for SOCKS support
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Python/pyenv%E7%9A%84%E5%AE%89%E8%A3%85%E4%BF%A1%E6%81%AF/" title="Pyenv的安装信息" class="md-nav__link">
+      Pyenv的安装信息
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Python/pyinstaller%E5%AE%89%E8%A3%85/" title="Pyinstaller安装" class="md-nav__link">
+      Pyinstaller安装
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-8" type="checkbox" id="nav-3-8">
+    
+    <label class="md-nav__link" for="nav-3-8">
+      Ruby
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Ruby" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-8">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Ruby
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Ruby/Rails%E7%AC%94%E8%AE%B0/" title="Rails笔记" class="md-nav__link">
+      Rails笔记
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Ruby/Ruby%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Ruby的一些笔记" class="md-nav__link">
+      Ruby的一些笔记
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Ruby/%E4%BD%BF%E7%94%A8Rails%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE%E9%94%99%E8%AF%AF/" title="使用Rails新建项目错误" class="md-nav__link">
+      使用Rails新建项目错误
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Ruby/%E8%A7%A3%E5%86%B3bundle%20install%E5%A4%AA%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/" title="解决bundle install太慢的问题" class="md-nav__link">
+      解决bundle install太慢的问题
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-9" type="checkbox" id="nav-3-9">
+    
+    <label class="md-nav__link" for="nav-3-9">
+      Shell
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Shell" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-9">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Shell
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Shell/Bash%E9%80%9F%E6%9F%A5%E5%8F%82%E8%80%83/" title="Bash速查参考" class="md-nav__link">
+      Bash速查参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Shell/bash%E5%91%BD%E4%BB%A4%E5%AE%9E%E4%BE%8B/" title="Bash命令实例" class="md-nav__link">
+      Bash命令实例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Shell/shell%E5%88%9D%E5%AD%A6%E8%80%85%E5%8F%82%E8%80%83/" title="Shell初学者参考" class="md-nav__link">
+      Shell初学者参考
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Shell/%E5%A4%84%E7%90%86utf8/" title="处理utf8" class="md-nav__link">
+      处理utf8
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Shell/%E5%A6%82%E4%BD%95%E8%AE%A9ls%E5%A4%A7%E5%B0%8F%E5%86%99%E4%B8%8D%E6%95%8F%E6%84%9F/" title="如何让ls大小写不敏感" class="md-nav__link">
+      如何让ls大小写不敏感
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Shell/%E6%93%8D%E4%BD%9C%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8F%98%E9%87%8F/" title="操作多行字符串变量" class="md-nav__link">
+      操作多行字符串变量
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/Shell/%E8%A7%A3%E8%AF%BBpyenv%E7%9A%84shell/" title="解读pyenv的shell" class="md-nav__link">
+      解读pyenv的shell
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-10" type="checkbox" id="nav-3-10">
+    
+    <label class="md-nav__link" for="nav-3-10">
+      Android
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Android" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-10">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Android
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/android/android%E7%B1%BB%E5%BA%93%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE/" title="Android类库类关系图" class="md-nav__link">
+      Android类库类关系图
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-11" type="checkbox" id="nav-3-11">
+    
+    <label class="md-nav__link" for="nav-3-11">
+      iOS
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="iOS" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-11">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        iOS
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/iOS/iPad%20Pro%E7%9A%84%E4%BD%BF%E7%94%A8/" title="iPad Pro的使用" class="md-nav__link">
+      iPad Pro的使用
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-12" type="checkbox" id="nav-3-12">
+    
+    <label class="md-nav__link" for="nav-3-12">
+      macOS
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="macOS" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-12">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        macOS
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/macOS/2020-03-19-Mac-%E5%8D%87%E7%BA%A7%E5%88%B010.13%E4%B9%8B%E5%90%8E-Cocoapods-%E4%B8%8D%E8%83%BD%E7%94%A8%28%E8%BD%AC%E8%BD%BD%29/" title="Mac 升级到10.13之后 Cocoapods 不能用(转载)" class="md-nav__link">
+      Mac 升级到10.13之后 Cocoapods 不能用(转载)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/macOS/block_weak_strong/" title="\_\_block & \_\_weak & \_\_strong" class="md-nav__link">
+      \_\_block & \_\_weak & \_\_strong
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/macOS/macOS-iOS%E5%BC%80%E5%8F%91%E5%B8%B8%E7%94%A8%E7%9A%84%E6%A1%86%E6%9E%B6%E5%92%8C%E5%BA%93/" title="macOS iOS开发常用的框架和库" class="md-nav__link">
+      macOS iOS开发常用的框架和库
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/macOS/nsstring%E4%B8%BA%E4%BD%95%E8%A6%81%E7%94%A8copy/" title="NSString为何要用copy？而不是strong？" class="md-nav__link">
+      NSString为何要用copy？而不是strong？
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-13" type="checkbox" id="nav-3-13">
+    
+    <label class="md-nav__link" for="nav-3-13">
+      Mac软件
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Mac软件" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-13">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Mac软件
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/mac%E8%BD%AF%E4%BB%B6/10.10.4%E5%AF%B9%E9%94%AE%E7%9B%98%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7%E5%8A%A0%E5%BC%BA%E4%BA%86/" title="10.10.4对键盘的安全性加强了" class="md-nav__link">
+      10.10.4对键盘的安全性加强了
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/mac%E8%BD%AF%E4%BB%B6/Homebrew%E7%9B%B8%E5%85%B3/" title="Homebrew相关" class="md-nav__link">
+      Homebrew相关
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/mac%E8%BD%AF%E4%BB%B6/Keynote/" title="Keynote" class="md-nav__link">
+      Keynote
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/mac%E8%BD%AF%E4%BB%B6/Tmux%E6%8C%87%E5%8D%97/" title="Tmux指南" class="md-nav__link">
+      Tmux指南
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/mac%E8%BD%AF%E4%BB%B6/iTerm2%E7%9A%84%E8%AE%BE%E7%BD%AE/" title="iTerm2的设置" class="md-nav__link">
+      iTerm2的设置
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/mac%E8%BD%AF%E4%BB%B6/mailto%E5%8D%8F%E8%AE%AE%E7%9A%84%E9%BB%98%E8%AE%A4%E5%BA%94%E7%94%A8%E8%AE%BE%E7%BD%AE/" title="Mailto协议的默认应用设置" class="md-nav__link">
+      Mailto协议的默认应用设置
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-14" type="checkbox" id="nav-3-14">
+    
+    <label class="md-nav__link" for="nav-3-14">
+      其他
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="其他" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-14">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        其他
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%85%B6%E4%BB%96/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9B%B8%E5%85%B3%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/" title="计算机相关资源整理" class="md-nav__link">
+      计算机相关资源整理
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-15" type="checkbox" id="nav-3-15">
+    
+    <label class="md-nav__link" for="nav-3-15">
+      前端
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="前端" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-15">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        前端
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%89%8D%E7%AB%AF/javascript%E4%B8%AD%E7%9A%84this/" title="Javascript中的this" class="md-nav__link">
+      Javascript中的this
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-16" type="checkbox" id="nav-3-16">
+    
+    <label class="md-nav__link" for="nav-3-16">
+      小众语言
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="小众语言" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-16">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        小众语言
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%B0%8F%E4%BC%97%E8%AF%AD%E8%A8%80/Crystal%E8%AF%AD%E8%A8%80%E5%AE%89%E8%A3%85/" title="Crystal语言安装" class="md-nav__link">
+      Crystal语言安装
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-17" type="checkbox" id="nav-3-17">
+    
+    <label class="md-nav__link" for="nav-3-17">
+      效率工具
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="效率工具" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-17">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        效率工具
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/Keyboard_Maestro%E7%9B%B8%E5%85%B3/" title="Keyboard Maestro相关" class="md-nav__link">
+      Keyboard Maestro相关
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/alfred%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%BD%BF%E7%94%A8/" title="Alfred环境变量使用" class="md-nav__link">
+      Alfred环境变量使用
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/togglecapslock%E5%BC%80%E5%85%B3%E6%8E%A7%E5%88%B6asdw%E6%96%B9%E5%90%91%E9%94%AE/" title="Togglecapslock开关控制asdw方向键" class="md-nav__link">
+      Togglecapslock开关控制asdw方向键
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-18" type="checkbox" id="nav-3-18">
+    
+    <label class="md-nav__link" for="nav-3-18">
+      数据库
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="数据库" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-18">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        数据库
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="MySQL常用命令" class="md-nav__link">
+      MySQL常用命令
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E6%95%B0%E6%8D%AE%E5%BA%93/Mysql%E4%B8%ADjoin%E7%9A%84%E5%8C%BA%E5%88%AB/" title="Mysql中join的区别" class="md-nav__link">
+      Mysql中join的区别
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-19" type="checkbox" id="nav-3-19">
+    
+    <label class="md-nav__link" for="nav-3-19">
+      正则表达式
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="正则表达式" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-19">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        正则表达式
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/%E6%AD%A3%E5%88%99%E7%AC%94%E8%AE%B0/" title="正则笔记" class="md-nav__link">
+      正则笔记
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-20" type="checkbox" id="nav-3-20">
+    
+    <label class="md-nav__link" for="nav-3-20">
+      编译调试
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="编译调试" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-20">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        编译调试
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E7%BC%96%E8%AF%91%E8%B0%83%E8%AF%95/GDB-Cheat/" title="GDB Cheat Sheet" class="md-nav__link">
+      GDB Cheat Sheet
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-21" type="checkbox" id="nav-3-21">
+    
+    <label class="md-nav__link" for="nav-3-21">
+      编辑与编辑器
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="编辑与编辑器" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-21">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        编辑与编辑器
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/Markdown%E6%8B%BE%E9%81%97/" title="Markdown拾遗" class="md-nav__link">
+      Markdown拾遗
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/Typora/" title="Typora" class="md-nav__link">
+      Typora
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/VIM/" title="VIM" class="md-nav__link">
+      VIM
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E7%BC%96%E8%BE%91%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8/VSCode/" title="VSCode" class="md-nav__link">
+      VSCode
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-22" type="checkbox" id="nav-3-22">
+    
+    <label class="md-nav__link" for="nav-3-22">
+      计算机网络
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="计算机网络" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-22">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        计算机网络
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%A1%E7%AE%97%E6%9C%BA/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Nginx%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AB%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Nginx为什么叫反向代理" class="md-nav__link">
+      Nginx为什么叫反向代理
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      音乐
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="音乐" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        音乐
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E9%9F%B3%E4%B9%90/FenderST%E5%90%89%E4%BB%96%E9%9F%B3%E8%89%B2%E7%BA%BD%E4%BD%9C%E7%94%A8/" title="FenderST吉他音色纽作用" class="md-nav__link">
+      FenderST吉他音色纽作用
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E9%9F%B3%E4%B9%90/ukulele%E5%A6%82%E4%BD%95%E6%89%AB%E5%BC%A6/" title="Ukulele如何扫弦" class="md-nav__link">
+      Ukulele如何扫弦
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E9%9F%B3%E4%B9%90/%E4%BB%80%E4%B9%88%E6%98%AF%E8%B0%83%E6%80%A7/" title="什么是调性？什么是大小调式?!" class="md-nav__link">
+      什么是调性？什么是大小调式?!
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                <blockquote>
+<p>转载 <a href="https://juejin.im/post/5ca2b75f51882543ea4b81c8">深度解密Go语言之Slice</a></p>
+</blockquote>
+<p>Go 语言的 <code>slice</code> 很好用，不过也有一些坑。<code>slice</code> 是 Go 语言一个很重要的数据结构。网上已经有很多文章写过了，似乎没必要再写。但是每个人看问题的视角不同，写出来的东西自然也不一样。我这篇会从更底层的汇编语言去解读它。而且在我写这篇文章的过程中，发现绝大部分文章都存在一些问题，文章里会讲到，这里先不展开。</p>
+<p>我希望本文可以终结这个话题，下次再有人想和你讨论 <code>slice</code>，直接把这篇文章的链接丢过去就行了。</p>
+<h1 id="slice">当我们在说 slice 时，到底在说什么<a class="headerlink" href="#slice" title="Permanent link">&para;</a></h1>
+<p><code>slice</code> 翻译成中文就是<code>切片</code>，它和<code>数组（array）</code>很类似，可以用下标的方式进行访问，如果越界，就会产生 panic。但是它比数组更灵活，可以自动地进行扩容。</p>
+<p>了解 slice 的本质，最简单的方法就是看它的源代码：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// runtime/slice.go</span>
+<span class="kd">type</span> <span class="nx">slice</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">array</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 元素指针</span>
+    <span class="nx">len</span>   <span class="kt">int</span> <span class="c1">// 长度 </span>
+    <span class="nx">cap</span>   <span class="kt">int</span> <span class="c1">// 容量</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>看到了吗，<code>slice</code> 共有三个属性： <code>指针</code>，指向底层数组； <code>长度</code>，表示切片可用元素的个数，也就是说使用下标对 slice 的元素进行访问时，下标不能超过 slice 的长度； <code>容量</code>，底层数组的元素个数，容量 &gt;= 长度。在底层数组不进行扩容的情况下，容量也是 slice 可以扩张的最大限度。</p>
+<p><img alt="image-20191209172340044" src="../../assets/blog/image-20191209172340044.png" />43</p>
+<p>注意，底层数组是可以被多个 slice 同时指向的，因此对一个 slice 的元素进行操作是有可能影响到其他 slice 的。</p>
+<h1 id="slice_1">slice 的创建<a class="headerlink" href="#slice_1" title="Permanent link">&para;</a></h1>
+<p>创建 slice 的方式有以下几种：</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>方式</th>
+<th>代码示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>直接声明</td>
+<td><code>var slice []int</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>new</td>
+<td><code>slice := *new([]int)</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>字面量</td>
+<td><code>slice := []int{1,2,3,4,5}</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>make</td>
+<td><code>slice := make([]int, 5, 10)</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>从切片或数组“截取”</td>
+<td><code>slice := array[1:5]</code> 或 <code>slice := sourceSlice[1:5]</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_1">直接声明<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>第一种创建出来的 slice 其实是一个 <code>nil slice</code>。它的长度和容量都为0。和<code>nil</code>比较的结果为<code>true</code>。</p>
+<p>这里比较混淆的是<code>empty slice</code>，它的长度和容量也都为0，但是所有的空切片的数据指针都指向同一个地址 <code>0xc42003bda0</code>。空切片和 <code>nil</code> 比较的结果为<code>false</code>。</p>
+<p>它们的内部结构如下图：</p>
+<p><img alt="image-20191209172410509" src="../../assets/blog/image-20191209172410509.png" /></p>
+<table>
+<thead>
+<tr>
+<th>创建方式</th>
+<th>nil切片</th>
+<th>空切片</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方式一</td>
+<td>var s1 []int</td>
+<td>var s2 = []int{}</td>
+</tr>
+<tr>
+<td>方式二</td>
+<td>var s4 = *new([]int)</td>
+<td>var s3 = make([]int, 0)</td>
+</tr>
+<tr>
+<td>长度</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>容量</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>和 <code>nil</code> 比较</td>
+<td><code>true</code></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>nil</code> 切片和空切片很相似，长度和容量都是0，官方建议尽量使用 <code>nil</code> 切片。</p>
+<p>关于<code>nil slice</code>和<code>empty slice</code>的探索可以参考公众号“码洞”作者老钱写的一篇文章《深度解析 Go 语言中「切片」的三种特殊状态》，地址附在了参考资料部分。</p>
+<h2 id="_2">字面量<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>比较简单，直接用<code>初始化表达式</code>创建。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">s1</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s1</span><span class="p">),</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">s1</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>运行结果：</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">100</span><span class="p">]</span> <span class="mi">9</span> <span class="mi">9</span>
+</code></pre></div>
+
+<p>唯一值得注意的是上面的代码例子中使用了索引号，直接赋值，这样，其他未注明的元素则默认 <code>0 值</code>。</p>
+<h2 id="make">make<a class="headerlink" href="#make" title="Permanent link">&para;</a></h2>
+<p><code>make</code>函数需要传入三个参数：切片类型，长度，容量。当然，容量可以不传，默认和长度相等。</p>
+<p>上篇文章<a href="https://www.cnblogs.com/qcrao-2018/p/10562216.html">《走进Go的底层》</a>中，我们学到了汇编这个工具，这次我们再次请出汇编来更深入地看看<code>slice</code>。如果没看过上篇文章，建议先回去看完，再继续阅读本文效果更佳。</p>
+<p>先来一小段玩具代码，使用 <code>make</code> 关键字创建 <code>slice</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">slice</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// 长度为5，容量为10</span>
+    <span class="nx">slice</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 索引为2的元素赋值为2</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">slice</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>执行如下命令，得到 Go 汇编代码：</p>
+<div class="highlight"><pre><span></span><code>go tool compile -S main.go
+</code></pre></div>
+
+<p>我们只关注main函数：</p>
+<div class="highlight"><pre><span></span><code><span class="err">0</span><span class="nf">x0000</span> <span class="mi">00000</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">TEXT</span>    <span class="err">&quot;&quot;</span><span class="no">.main</span><span class="p">(</span><span class="no">SB</span><span class="p">),</span> <span class="no">$96-0</span>
+<span class="err">0</span><span class="nf">x0000</span> <span class="mi">00000</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="p">(</span><span class="no">TLS</span><span class="p">),</span> <span class="no">CX</span>
+<span class="err">0</span><span class="nf">x0009</span> <span class="mi">00009</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">CMPQ</span>    <span class="no">SP</span><span class="p">,</span> <span class="mi">16</span><span class="p">(</span><span class="no">CX</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x000d</span> <span class="mi">00013</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">JLS</span>     <span class="mi">228</span>
+<span class="err">0</span><span class="nf">x0013</span> <span class="mi">00019</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">SUBQ</span>    <span class="no">$96</span><span class="p">,</span> <span class="no">SP</span>
+<span class="err">0</span><span class="nf">x0017</span> <span class="mi">00023</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">BP</span><span class="p">,</span> <span class="mi">88</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x001c</span> <span class="mi">00028</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">LEAQ</span>    <span class="mi">88</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">BP</span>
+<span class="err">0</span><span class="nf">x0021</span> <span class="mi">00033</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">FUNCDATA</span>    <span class="no">$0</span><span class="p">,</span> <span class="no">gclocals</span><span class="err">·</span><span class="mi">69</span><span class="no">c1753bd5f81501d95132d08af04464</span><span class="p">(</span><span class="no">SB</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0021</span> <span class="mi">00033</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">FUNCDATA</span>    <span class="no">$1</span><span class="p">,</span> <span class="no">gclocals</span><span class="err">·</span><span class="mi">57</span><span class="no">cc5e9a024203768cbab1c731570886</span><span class="p">(</span><span class="no">SB</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0021</span> <span class="mi">00033</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">LEAQ</span>    <span class="no">type.int</span><span class="p">(</span><span class="no">SB</span><span class="p">),</span> <span class="no">AX</span>
+<span class="err">0</span><span class="nf">x0028</span> <span class="mi">00040</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">AX</span><span class="p">,</span> <span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x002c</span> <span class="mi">00044</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">$5</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0035</span> <span class="mi">00053</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">$10</span><span class="p">,</span> <span class="mi">16</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x003e</span> <span class="mi">00062</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">PCDATA</span>  <span class="no">$0</span><span class="p">,</span> <span class="no">$0</span>
+<span class="err">0</span><span class="nf">x003e</span> <span class="mi">00062</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">CALL</span>    <span class="no">runtime.makeslice</span><span class="p">(</span><span class="no">SB</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0043</span> <span class="mi">00067</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="mi">24</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">AX</span>
+<span class="err">0</span><span class="nf">x0048</span> <span class="mi">00072</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="mi">32</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">CX</span>
+<span class="err">0</span><span class="nf">x004d</span> <span class="mi">00077</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="mi">40</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">DX</span>
+<span class="err">0</span><span class="nf">x0052</span> <span class="mi">00082</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">7</span><span class="p">)</span><span class="no">CMPQ</span>    <span class="no">CX</span><span class="p">,</span> <span class="no">$2</span>
+<span class="err">0</span><span class="nf">x0056</span> <span class="mi">00086</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">7</span><span class="p">)</span><span class="no">JLS</span>     <span class="mi">221</span>
+<span class="err">0</span><span class="nf">x005c</span> <span class="mi">00092</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">7</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">$2</span><span class="p">,</span> <span class="mi">16</span><span class="p">(</span><span class="no">AX</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0064</span> <span class="mi">00100</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">AX</span><span class="p">,</span> <span class="err">&quot;&quot;</span><span class="no">..autotmp_2</span><span class="err">+</span><span class="mi">64</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0069</span> <span class="mi">00105</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">CX</span><span class="p">,</span> <span class="err">&quot;&quot;</span><span class="no">..autotmp_2</span><span class="err">+</span><span class="mi">72</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x006e</span> <span class="mi">00110</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">DX</span><span class="p">,</span> <span class="err">&quot;&quot;</span><span class="no">..autotmp_2</span><span class="err">+</span><span class="mi">80</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0073</span> <span class="mi">00115</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">$0</span><span class="p">,</span> <span class="err">&quot;&quot;</span><span class="no">..autotmp_1</span><span class="err">+</span><span class="mi">48</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x007c</span> <span class="mi">00124</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">$0</span><span class="p">,</span> <span class="err">&quot;&quot;</span><span class="no">..autotmp_1</span><span class="err">+</span><span class="mi">56</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0085</span> <span class="mi">00133</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">LEAQ</span>    <span class="no">type.</span><span class="p">[]</span><span class="no">int</span><span class="p">(</span><span class="no">SB</span><span class="p">),</span> <span class="no">AX</span>
+<span class="err">0</span><span class="nf">x008c</span> <span class="mi">00140</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">AX</span><span class="p">,</span> <span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x0090</span> <span class="mi">00144</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">LEAQ</span>    <span class="err">&quot;&quot;</span><span class="no">..autotmp_2</span><span class="err">+</span><span class="mi">64</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">AX</span>
+<span class="err">0</span><span class="nf">x0095</span> <span class="mi">00149</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">AX</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x009a</span> <span class="mi">00154</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">PCDATA</span>  <span class="no">$0</span><span class="p">,</span> <span class="no">$1</span>
+<span class="err">0</span><span class="nf">x009a</span> <span class="mi">00154</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">CALL</span>    <span class="no">runtime.convT2Eslice</span><span class="p">(</span><span class="no">SB</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x009f</span> <span class="mi">00159</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="mi">16</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">AX</span>
+<span class="err">0</span><span class="nf">x00a4</span> <span class="mi">00164</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="mi">24</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">CX</span>
+<span class="err">0</span><span class="nf">x00a9</span> <span class="mi">00169</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">AX</span><span class="p">,</span> <span class="err">&quot;&quot;</span><span class="no">..autotmp_1</span><span class="err">+</span><span class="mi">48</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00ae</span> <span class="mi">00174</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">CX</span><span class="p">,</span> <span class="err">&quot;&quot;</span><span class="no">..autotmp_1</span><span class="err">+</span><span class="mi">56</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00b3</span> <span class="mi">00179</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">LEAQ</span>    <span class="err">&quot;&quot;</span><span class="no">..autotmp_1</span><span class="err">+</span><span class="mi">48</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">AX</span>
+<span class="err">0</span><span class="nf">x00b8</span> <span class="mi">00184</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">AX</span><span class="p">,</span> <span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00bc</span> <span class="mi">00188</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">$1</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00c5</span> <span class="mi">00197</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">$1</span><span class="p">,</span> <span class="mi">16</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00ce</span> <span class="mi">00206</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">PCDATA</span>  <span class="no">$0</span><span class="p">,</span> <span class="no">$1</span>
+<span class="err">0</span><span class="nf">x00ce</span> <span class="mi">00206</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span><span class="no">CALL</span>    <span class="no">fmt.Println</span><span class="p">(</span><span class="no">SB</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00d3</span> <span class="mi">00211</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="mi">88</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">BP</span>
+<span class="err">0</span><span class="nf">x00d8</span> <span class="mi">00216</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span><span class="no">ADDQ</span>    <span class="no">$96</span><span class="p">,</span> <span class="no">SP</span>
+<span class="err">0</span><span class="nf">x00dc</span> <span class="mi">00220</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span><span class="no">RET</span>
+<span class="err">0</span><span class="nf">x00dd</span> <span class="mi">00221</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">7</span><span class="p">)</span><span class="no">PCDATA</span>  <span class="no">$0</span><span class="p">,</span> <span class="no">$0</span>
+<span class="err">0</span><span class="nf">x00dd</span> <span class="mi">00221</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">7</span><span class="p">)</span><span class="no">CALL</span>    <span class="no">runtime.panicindex</span><span class="p">(</span><span class="no">SB</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00e2</span> <span class="mi">00226</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">7</span><span class="p">)</span><span class="no">UNDEF</span>
+<span class="err">0</span><span class="nf">x00e4</span> <span class="mi">00228</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">7</span><span class="p">)</span><span class="no">NOP</span>
+<span class="err">0</span><span class="nf">x00e4</span> <span class="mi">00228</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">PCDATA</span>  <span class="no">$0</span><span class="p">,</span> <span class="no">$-1</span>
+<span class="err">0</span><span class="nf">x00e4</span> <span class="mi">00228</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">CALL</span>    <span class="no">runtime.morestack_noctxt</span><span class="p">(</span><span class="no">SB</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x00e9</span> <span class="mi">00233</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">JMP</span>     <span class="mi">0</span>
+</code></pre></div>
+
+<p>先说明一下，Go 语言汇编 <code>FUNCDATA</code> 和 <code>PCDATA</code> 是编译器产生的，用于保存一些和垃圾收集相关的信息，我们先不用 care。</p>
+<p>以上汇编代码行数比较多，没关系，因为命令都比较简单，而且我们的 Go 源码也足够简单，没有理由看不明白。</p>
+<p>我们先从上到下扫一眼，看到几个关键函数：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">CALL</span>    <span class="nx">runtime</span><span class="p">.</span><span class="nx">makeslice</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+<span class="nx">CALL</span>    <span class="nx">runtime</span><span class="p">.</span><span class="nx">convT2Eslice</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+<span class="nx">CALL</span>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+<span class="nx">CALL</span>    <span class="nx">runtime</span><span class="p">.</span><span class="nx">morestack_noctxt</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+</code></pre></div>
+
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>创建slice</td>
+</tr>
+<tr>
+<td>2</td>
+<td>类型转换</td>
+</tr>
+<tr>
+<td>3</td>
+<td>打印函数</td>
+</tr>
+<tr>
+<td>4</td>
+<td>栈空间扩容</td>
+</tr>
+</tbody>
+</table>
+<p><code>1</code>是创建 slice 相关的；<code>2</code>是类型转换；调用 <code>fmt.Println</code>需要将 slice 作一个转换； <code>3</code>是打印语句；<code>4</code>是栈空间扩容函数，在函数开始处，会检查当前栈空间是否足够，不够的话需要调用它来进行扩容。暂时可以忽略。</p>
+<p>调用了函数就会涉及到参数传递，Go 的参数传递都是通过 栈空间完成的。接下来，我们详细分析这整个过程。</p>
+<table>
+<thead>
+<tr>
+<th>行数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>main</code>函数定义，栈帧大小为 <code>96B</code></td>
+</tr>
+<tr>
+<td>2-4</td>
+<td>判断栈是否需要进行扩容，如果需要则跳到 <code>228</code>，这里会调用 <code>runtime.morestack_noctxt(SB)</code> 进行栈扩容操作。具体细节后续还会有文章来讲</td>
+</tr>
+<tr>
+<td>5-9</td>
+<td>将 <code>caller BP</code> 压栈，具体细节后面会讲到</td>
+</tr>
+<tr>
+<td>10-15</td>
+<td>调用 <code>runtime.makeslice(SB)</code> 函数及准备工作。*_type表示的是 <code>int</code>，也就是 <code>slice</code> 元素的类型。这里对应的源码是第6行，也就是调用 <code>make</code> 创建 <code>slice</code> 的那一行。<code>5</code> 和 <code>10</code> 分别代表长度和容量，函数参数会在栈顶准备好，之后执行函数调用命令 <code>CALL</code>，进入到被调用函数的栈帧，就会按顺序从 <code>caller</code> 的栈顶取函数参数</td>
+</tr>
+<tr>
+<td>16-18</td>
+<td>接收 <code>makeslice</code>的返回值，通过 <code>move</code> 移动到寄存器中</td>
+</tr>
+<tr>
+<td>19-21</td>
+<td>给数组索引值为 <code>2</code> 的元素赋上值 <code>2</code>，因为是 <code>int</code> 型的 <code>slice</code>，元素大小为8字节，所以 <code>MOVQ $2, 16(AX)</code> 此命令就是将 <code>2</code> 搬到索引为 <code>2</code> 的位置。这里还会对索引值的大小进行检查，如果越界，则会跳转到 <code>221</code>，执行 <code>panic</code> 函数</td>
+</tr>
+<tr>
+<td>22-26</td>
+<td>分别通过寄存器 <code>AX，CX，DX</code> 将 <code>makeslice</code> 的返回值 <code>move</code> 到内存的其他位置，也称为局部变量，这样就构造出了 <code>slice</code></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="image-20191209172438705" src="../../assets/blog/image-20191209172438705.png" /></p>
+<p>左边是栈上的数据，右边是堆上的数据。<code>array</code> 指向 <code>slice</code> 的底层数据，被分配到堆上了。注意，栈上的地址是从高向低增长；堆则从低向高增长。栈左边的数字表示对应的汇编代码的行数，栈右边箭头则表示栈地址。（48）SP、（56）SP 表示的内容接着往下看。</p>
+<p>注意，在图中，栈地址是从下往上增长，所以 SP 表示的是图中 <code>*_type</code> 所在的位置，其它的依此类推。</p>
+<table>
+<thead>
+<tr>
+<th>行数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>27-32</td>
+<td>准备调用 <code>runtime.convT2Eslice(SB)</code>的函数参数</td>
+</tr>
+<tr>
+<td>33-36</td>
+<td>接收返回值，通过AX，CX寄存器 <code>move</code> 到(48)SP、（56）SP</td>
+</tr>
+</tbody>
+</table>
+<p><code>convT2Eslice</code> 的函数声明如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span> <span class="nx">convT2Eslice</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">elem</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="p">(</span><span class="nx">e</span> <span class="nx">eface</span><span class="p">)</span> 
+</code></pre></div>
+
+<p>第一个参数是指针 <code>*_type</code>，<code>_type</code>是一个表示类型的结构体，这里传入的就是 <code>slice</code>的类型 <code>[]int</code>；第二个参数则是元素的指针，这里传入的就是 <code>slice</code> 底层数组的首地址。</p>
+<p>返回值 <code>eface</code> 的结构体定义如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span> <span class="nx">eface</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">_type</span> <span class="o">*</span><span class="nx">_type</span>
+    <span class="nx">data</span>  <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>由于我们会调用 <code>fmt.Println(slice)</code>，看下函数原型：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span> <span class="nx">Println</span><span class="p">(</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+
+<p><code>Println</code> 接收 interface 类型，因此我们需要将 <code>slice</code> 转换成 interface 类型。由于 <code>slice</code> 没有方法，是个“<code>空 interface</code>”。因此会调用 <code>convT2Eslice</code> 完成这一转换过程。</p>
+<p><code>convT2Eslice</code> 函数返回的是类型指针和数据地址。源码就不贴了，大体流程是：调用 <code>mallocgc</code> 分配一块内存，把数据 <code>copy</code> 进到新的内存，然后返回这块内存的地址，<code>*_type</code> 则直接返回传入的参数。</p>
+<p><img alt="image-20191209172504288" src="../../assets/blog/image-20191209172504288.png" /></p>
+<p><code>32(SP)</code> 和 <code>40(SP)</code> 其实是 <code>makeslice</code> 函数的返回值，这里可以忽略。</p>
+<p>还剩 <code>fmt.Println(slice)</code> 最后一个函数调用了，我们继续。</p>
+<table>
+<thead>
+<tr>
+<th>行数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>37-40</td>
+<td>准备 <code>Println</code> 函数参数。共3个参数，第一个是类型地址，还有两个 <code>1</code>，这块暂时还不知道为什么要传，有了解的同学可以在文章后面留言</td>
+</tr>
+</tbody>
+</table>
+<p>所以调用 <code>fmt.Println(slice)</code> 时，实际是传入了一个 <code>slice类型的eface地址</code>。这样，<code>Println</code>就可以访问类型中的数据，最终给“打印”出来。</p>
+<p><img alt="image-20191209172521441" src="../../assets/blog/image-20191209172521441.png" /></p>
+<p>最后，我们看下 <code>main</code> 函数栈帧的开始和收尾部分。</p>
+<div class="highlight"><pre><span></span><code><span class="err">0</span><span class="nf">x0013</span> <span class="mi">00019</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">SUBQ</span>    <span class="no">$96</span><span class="p">,</span> <span class="no">SP</span>
+<span class="err">0</span><span class="nf">x0017</span> <span class="mi">00023</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="no">BP</span><span class="p">,</span> <span class="mi">88</span><span class="p">(</span><span class="no">SP</span><span class="p">)</span>
+<span class="err">0</span><span class="nf">x001c</span> <span class="mi">00028</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="no">LEAQ</span>    <span class="mi">88</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">BP</span>
+<span class="err">…………………………</span>
+<span class="err">0</span><span class="nf">x00d3</span> <span class="mi">00211</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span><span class="no">MOVQ</span>    <span class="mi">88</span><span class="p">(</span><span class="no">SP</span><span class="p">),</span> <span class="no">BP</span>
+<span class="err">0</span><span class="nf">x00d8</span> <span class="mi">00216</span> <span class="p">(</span><span class="no">main.go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span><span class="no">ADDQ</span>    <span class="no">$96</span><span class="p">,</span> <span class="no">SP</span>
+<span class="nf">RET</span>
+</code></pre></div>
+
+<p><code>BP</code>可以理解为保存了当前函数栈帧栈底的地址，<code>SP</code>则保存栈顶的地址。</p>
+<p>初始，<code>BP</code> 和 <code>SP</code> 分别有一个初始状态。</p>
+<p><code>main</code> 函数执行的时候，先根据 <code>main</code> 函数栈帧大小确定 <code>SP</code> 的新指向，使得 <code>main</code> 函数栈帧大小达到 <code>96B</code>。之后把老的 <code>BP</code> 保存到 <code>main</code>  函数栈帧的底部，并使 <code>BP</code> 寄存器重新指向新的栈底，也就是 <code>main</code> 函数栈帧的栈底。</p>
+<p>最后，当 <code>main</code> 函数执行完毕，把它栈底的 <code>BP</code> 给回弹回到 <code>BP</code> 寄存器，恢复调用前的初始状态。一切都像是没有发生一样，完美的现场。</p>
+<p><img alt="image-20191209172538129" src="../../assets/blog/image-20191209172538129.png" /></p>
+<p>这部分，又详细地分析了一遍函数调用的过程。一方面，让大家复习一下上一篇文章讲的内容；另一方面，向大家展示如何找到 Go 中的一个函数背后真实调用了哪些函数。像例子中，我们就看到了 <code>make</code> 函数背后，实际上是调用了 <code>makeslice</code> 函数；还有一点，让大家对汇编不那么“惧怕”，可以轻松地分析一些东西。</p>
+<h2 id="_3">截取<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>截取也是比较常见的一种创建 slice 的方法，可以从数组或者 slice 直接截取，当然需要指定起止索引位置。</p>
+<p>基于已有 slice 创建新 slice 对象，被称为 <code>reslice</code>。新 slice 和老 slice 共用底层数组，新老 slice 对底层数组的更改都会影响到彼此。基于数组创建的新 slice 对象也是同样的效果：对数组或 slice 元素作的更改都会影响到彼此。</p>
+<p>值得注意的是，新老 slice 或者新 slice 老数组互相影响的前提是两者共用底层数组，如果因为执行 <code>append</code> 操作使得新 slice 底层数组扩容，移动到了新的位置，两者就不会相互影响了。所以，<code>问题的关键在于两者是否会共用底层数组</code>。</p>
+<p>截取操作采用如下方式：</p>
+<div class="highlight"><pre><span></span><code> <span class="nx">data</span> <span class="o">:=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+ <span class="nx">slice</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="c1">// data[low, high, max]</span>
+</code></pre></div>
+
+<p>对 <code>data</code> 使用3个索引值，截取出新的  <code>slice</code>。这里 <code>data</code> 可以是数组或者 <code>slice</code>。<code>low</code> 是最低索引值，这里是闭区间，也就是说第一个元素是 <code>data</code> 位于 <code>low</code> 索引处的元素；而 <code>high</code> 和 <code>max</code> 则是开区间，表示最后一个元素只能是索引 <code>high-1</code> 处的元素，而最大容量则只能是索引 <code>max-1</code> 处的元素。</p>
+<div class="highlight"><pre><span></span><code>max &gt;= high &gt;= low
+</code></pre></div>
+
+<p>当 <code>high == low</code> 时，新 <code>slice</code> 为空。</p>
+<p>还有一点，<code>high</code> 和 <code>max</code> 必须在老数组或者老 <code>slice</code> 的容量（<code>cap</code>）范围内。</p>
+<p>来看一个例子，来自雨痕大佬《Go学习笔记》第四版，P43页，参考资料里有开源书籍地址。这里我会进行扩展，并会作详细说明：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">slice</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+    <span class="nx">s1</span> <span class="o">:=</span> <span class="nx">slice</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+    <span class="nx">s2</span> <span class="o">:=</span> <span class="nx">s1</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
+
+    <span class="nx">s2</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="nx">s2</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s2</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+    <span class="nx">s1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">20</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s1</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s2</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">slice</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>先看下代码运行的结果：</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">20</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">100</span> <span class="mi">200</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">20</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">100</span> <span class="mi">9</span><span class="p">]</span>
+</code></pre></div>
+
+<p>我们来走一遍代码，初始状态如下：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">slice</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+<span class="nx">s1</span> <span class="o">:=</span> <span class="nx">slice</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="nx">s2</span> <span class="o">:=</span> <span class="nx">s1</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
+</code></pre></div>
+
+<p><code>s1</code> 从 <code>slice</code> 索引2（闭区间）到索引5（开区间，元素真正取到索引4），长度为3，容量默认到数组结尾，为8。 <code>s2</code> 从 <code>s1</code> 的索引2（闭区间）到索引6（开区间，元素真正取到索引5），容量到索引7（开区间，真正到索引6），为5。</p>
+<p><img alt="image-20191209172559486" src="../../assets/blog/image-20191209172559486.png" /></p>
+<p>接着，向 <code>s2</code> 尾部追加一个元素 100：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">s2</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</code></pre></div>
+
+<p><code>s2</code> 容量刚好够，直接追加。不过，这会修改原始数组对应位置的元素。这一改动，数组和 <code>s1</code> 都可以看得到。</p>
+<p><img alt="image-20191209172615447" src="../../assets/blog/image-20191209172615447.png" /></p>
+<p>再次向 <code>s2</code> 追加元素200：</p>
+<div class="highlight"><pre><span></span><code>s2 = append(s2, 100)
+</code></pre></div>
+
+<p>这时，<code>s2</code> 的容量不够用，该扩容了。于是，<code>s2</code> 另起炉灶，将原来的元素复制新的位置，扩大自己的容量。并且为了应对未来可能的 <code>append</code> 带来的再一次扩容，<code>s2</code> 会在此次扩容的时候多留一些 <code>buffer</code>，将新的容量将扩大为原始容量的2倍，也就是10了。</p>
+<p><img alt="image-20191209172627557" src="../../assets/blog/image-20191209172627557.png" /></p>
+<p>最后，修改 <code>s1</code> 索引为2位置的元素：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">s1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">20</span>
+</code></pre></div>
+
+<p>这次只会影响原始数组相应位置的元素。它影响不到 <code>s2</code> 了，人家已经远走高飞了。</p>
+<p><img alt="image-20191209172642902" src="../../assets/blog/image-20191209172642902.png" /></p>
+<p>再提一点，打印 <code>s1</code> 的时候，只会打印出 <code>s1</code> 长度以内的元素。所以，只会打印出3个元素，虽然它的底层数组不止3个元素。</p>
+<p>至于，我们想在汇编层面看看到底它们是如何共享底层数组的，限于篇幅，这里不再展开。感兴趣的同学可以在公众号后台回复：<code>切片截取</code>。</p>
+<p>我会给你详细分析函数调用关系，对共享底层数组的行为也会一目了然。二维码见文章底部。</p>
+<h1 id="slice_2">slice 和数组的区别在哪<a class="headerlink" href="#slice_2" title="Permanent link">&para;</a></h1>
+<p>slice 的底层数据是数组，slice 是对数组的封装，它描述一个数组的片段。两者都可以通过下标来访问单个元素。</p>
+<p>数组是定长的，长度定义好之后，不能再更改。在 Go 中，数组是不常见的，因为其长度是类型的一部分，限制了它的表达能力，比如 <code>[3]int</code> 和 <code>[4]int</code> 就是不同的类型。</p>
+<p>而切片则非常灵活，它可以动态地扩容。切片的类型和长度无关。</p>
+<h1 id="append">append 到底做了什么<a class="headerlink" href="#append" title="Permanent link">&para;</a></h1>
+<p>先来看看 <code>append</code> 函数的原型：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span> <span class="nb">append</span><span class="p">(</span><span class="nx">slice</span> <span class="p">[]</span><span class="nx">Type</span><span class="p">,</span> <span class="nx">elems</span> <span class="o">...</span><span class="nx">Type</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Type</span>
+</code></pre></div>
+
+<p>append 函数的参数长度可变，因此可以追加多个值到 slice 中，还可以用 <code>...</code> 传入 slice，直接追加一个切片。</p>
+<div class="highlight"><pre><span></span><code><span class="nx">slice</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">elem1</span><span class="p">,</span> <span class="nx">elem2</span><span class="p">)</span>
+<span class="nx">slice</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">anotherSlice</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+
+<p><code>append</code>函数返回值是一个新的slice，Go编译器不允许调用了 append 函数后不使用返回值。</p>
+<div class="highlight"><pre><span></span><code><span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">elem1</span><span class="p">,</span> <span class="nx">elem2</span><span class="p">)</span>
+<span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">anotherSlice</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+
+<p>所以上面的用法是错的，不能编译通过。</p>
+<p>使用 append 可以向 slice 追加元素，实际上是往底层数组添加元素。但是底层数组的长度是固定的，如果索引 <code>len-1</code> 所指向的元素已经是底层数组的最后一个元素，就没法再添加了。</p>
+<p>这时，slice 会迁移到新的内存位置，新底层数组的长度也会增加，这样就可以放置新增的元素。同时，为了应对未来可能再次发生的 append 操作，新的底层数组的长度，也就是新 <code>slice</code> 的容量是留了一定的 <code>buffer</code> 的。否则，每次添加元素的时候，都会发生迁移，成本太高。</p>
+<p>新 slice 预留的 <code>buffer</code> 大小是有一定规律的。网上大多数的文章都是这样描述的：</p>
+<blockquote>
+<p>当原 slice 容量小于 <code>1024</code> 的时候，新 slice 容量变成原来的 <code>2</code> 倍；原 slice 容量超过 <code>1024</code>，新 slice 容量变成原来的<code>1.25</code>倍。</p>
+</blockquote>
+<p>我在这里先说结论：以上描述是错误的。</p>
+<p>为了说明上面的规律是错误的，我写了一小段玩具代码：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="nx">oldCap</span> <span class="o">:=</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">2048</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">s</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+
+        <span class="nx">newCap</span> <span class="o">:=</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nx">newCap</span> <span class="o">!=</span> <span class="nx">oldCap</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;[%d -&gt; %4d] cap = %-4d  |  after append %-4d  cap = %-4d\n&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">oldCap</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">newCap</span><span class="p">)</span>
+            <span class="nx">oldCap</span> <span class="p">=</span> <span class="nx">newCap</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>我先创建了一个空的 <code>slice</code>，然后，在一个循环里不断往里面 <code>append</code> 新的元素。然后记录容量的变化，并且每当容量发生变化的时候，记录下老的容量，以及添加完元素之后的容量，同时记下此时 <code>slice</code> 里的元素。这样，我就可以观察，新老 <code>slice</code> 的容量变化情况，从而找出规律。</p>
+<p>运行结果：</p>
+<div class="highlight"><pre><span></span><code>[0 -&gt;   -1] cap = 0     |  after append 0     cap = 1   
+[0 -&gt;    0] cap = 1     |  after append 1     cap = 2   
+[0 -&gt;    1] cap = 2     |  after append 2     cap = 4   
+[0 -&gt;    3] cap = 4     |  after append 4     cap = 8   
+[0 -&gt;    7] cap = 8     |  after append 8     cap = 16  
+[0 -&gt;   15] cap = 16    |  after append 16    cap = 32  
+[0 -&gt;   31] cap = 32    |  after append 32    cap = 64  
+[0 -&gt;   63] cap = 64    |  after append 64    cap = 128 
+[0 -&gt;  127] cap = 128   |  after append 128   cap = 256 
+[0 -&gt;  255] cap = 256   |  after append 256   cap = 512 
+[0 -&gt;  511] cap = 512   |  after append 512   cap = 1024
+[0 -&gt; 1023] cap = 1024  |  after append 1024  cap = 1280
+[0 -&gt; 1279] cap = 1280  |  after append 1280  cap = 1696
+[0 -&gt; 1695] cap = 1696  |  after append 1696  cap = 2304
+</code></pre></div>
+
+<p>在老 slice 容量小于1024的时候，新 slice 的容量的确是老 slice 的2倍。目前还算正确。</p>
+<p>但是，当老 slice 容量大于等于 <code>1024</code> 的时候，情况就有变化了。当向 slice 中添加元素 <code>1280</code> 的时候，老 slice 的容量为 <code>1280</code>，之后变成了 <code>1696</code>，两者并不是 <code>1.25</code> 倍的关系（1696/1280=1.325）。添加完 <code>1696</code> 后，新的容量 <code>2304</code> 当然也不是 <code>1696</code> 的 <code>1.25</code> 倍。</p>
+<p>可见，现在网上各种文章中的扩容策略并不正确。我们直接搬出源码：源码面前，了无秘密。</p>
+<p>从前面汇编代码我们也看到了，向 slice 追加元素的时候，若容量不够，会调用 <code>growslice</code> 函数，所以我们直接看它的代码。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// go 1.9.5 src/runtime/slice.go:82</span>
+<span class="kd">func</span> <span class="nx">growslice</span><span class="p">(</span><span class="nx">et</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">old</span> <span class="nx">slice</span><span class="p">,</span> <span class="nx">cap</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">slice</span> <span class="p">{</span>
+    <span class="c1">// ……</span>
+    <span class="nx">newcap</span> <span class="o">:=</span> <span class="nx">old</span><span class="p">.</span><span class="nx">cap</span>
+    <span class="nx">doublecap</span> <span class="o">:=</span> <span class="nx">newcap</span> <span class="o">+</span> <span class="nx">newcap</span>
+    <span class="k">if</span> <span class="nx">cap</span> <span class="p">&gt;</span> <span class="nx">doublecap</span> <span class="p">{</span>
+        <span class="nx">newcap</span> <span class="p">=</span> <span class="nx">cap</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">old</span><span class="p">.</span><span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">1024</span> <span class="p">{</span>
+            <span class="nx">newcap</span> <span class="p">=</span> <span class="nx">doublecap</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="nx">newcap</span> <span class="p">&lt;</span> <span class="nx">cap</span> <span class="p">{</span>
+                <span class="nx">newcap</span> <span class="o">+=</span> <span class="nx">newcap</span> <span class="o">/</span> <span class="mi">4</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// ……</span>
+
+    <span class="nx">capmem</span> <span class="p">=</span> <span class="nx">roundupsize</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">newcap</span><span class="p">)</span> <span class="o">*</span> <span class="nx">ptrSize</span><span class="p">)</span>
+    <span class="nx">newcap</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">capmem</span> <span class="o">/</span> <span class="nx">ptrSize</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>看到了吗？如果只看前半部分，现在网上各种文章里说的 <code>newcap</code> 的规律是对的。现实是，后半部分还对 <code>newcap</code> 作了一个<code>内存对齐</code>，这个和内存分配策略相关。进行内存对齐之后，新 slice 的容量是要 <code>大于等于</code> 老 slice 容量的 <code>2倍</code>或者<code>1.25倍</code>。</p>
+<p>之后，向 Go 内存管理器申请内存，将老 slice 中的数据复制过去，并且将 append 的元素添加到新的底层数组中。</p>
+<p>最后，向 <code>growslice</code> 函数调用者返回一个新的 slice，这个 slice 的长度并没有变化，而容量却增大了。</p>
+<p>关于 <code>append</code>，我们最后来看一个例子，来源于参考资料部分的【Golang Slice的扩容规则】。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">}</span>
+    <span class="nx">s</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;len=%d, cap=%d&quot;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">),</span><span class="nb">cap</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>运行结果是：</p>
+<div class="highlight"><pre><span></span><code>len=5, cap=6
+</code></pre></div>
+
+<p>如果按网上各种文章中总结的那样：小于原 slice 长度小于 1024 的时候，容量每次增加 1 倍。添加元素 4 的时候，容量变为4；添加元素 5 的时候不变；添加元素 6 的时候容量增加 1 倍，变成 8。</p>
+<p>那上面代码的运行结果就是：</p>
+<div class="highlight"><pre><span></span><code>len=5, cap=8
+</code></pre></div>
+
+<p>这是错误的！我们来仔细看看，为什么会这样，再次搬出代码：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// go 1.9.5 src/runtime/slice.go:82</span>
+<span class="kd">func</span> <span class="nx">growslice</span><span class="p">(</span><span class="nx">et</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">old</span> <span class="nx">slice</span><span class="p">,</span> <span class="nx">cap</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">slice</span> <span class="p">{</span>
+    <span class="c1">// ……</span>
+    <span class="nx">newcap</span> <span class="o">:=</span> <span class="nx">old</span><span class="p">.</span><span class="nx">cap</span>
+    <span class="nx">doublecap</span> <span class="o">:=</span> <span class="nx">newcap</span> <span class="o">+</span> <span class="nx">newcap</span>
+    <span class="k">if</span> <span class="nx">cap</span> <span class="p">&gt;</span> <span class="nx">doublecap</span> <span class="p">{</span>
+        <span class="nx">newcap</span> <span class="p">=</span> <span class="nx">cap</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// ……</span>
+    <span class="p">}</span>
+    <span class="c1">// ……</span>
+
+    <span class="nx">capmem</span> <span class="p">=</span> <span class="nx">roundupsize</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">newcap</span><span class="p">)</span> <span class="o">*</span> <span class="nx">ptrSize</span><span class="p">)</span>
+    <span class="nx">newcap</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">capmem</span> <span class="o">/</span> <span class="nx">ptrSize</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>这个函数的参数依次是 <code>元素的类型，老的 slice，新 slice 最小求的容量</code>。</p>
+<p>例子中 <code>s</code> 原来只有 2 个元素，<code>len</code> 和 <code>cap</code> 都为 2，<code>append</code> 了三个元素后，长度变为 3，容量最小要变成 5，即调用 <code>growslice</code> 函数时，传入的第三个参数应该为 5。即 <code>cap=5</code>。而一方面，<code>doublecap</code> 是原 <code>slice</code>容量的 2 倍，等于 4。满足第一个 <code>if</code> 条件，所以 <code>newcap</code> 变成了 5。</p>
+<p>接着调用了 <code>roundupsize</code> 函数，传入 40。（代码中ptrSize是指一个指针的大小，在64位机上是8）</p>
+<p>我们再看内存对齐，搬出 <code>roundupsize</code> 函数的代码：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/runtime/msize.go:13</span>
+<span class="kd">func</span> <span class="nx">roundupsize</span><span class="p">(</span><span class="nx">size</span> <span class="kt">uintptr</span><span class="p">)</span> <span class="kt">uintptr</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">size</span> <span class="p">&lt;</span> <span class="nx">_MaxSmallSize</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">size</span> <span class="o">&lt;=</span> <span class="nx">smallSizeMax</span><span class="o">-</span><span class="mi">8</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">class_to_size</span><span class="p">[</span><span class="nx">size_to_class8</span><span class="p">[(</span><span class="nx">size</span><span class="o">+</span><span class="nx">smallSizeDiv</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="nx">smallSizeDiv</span><span class="p">]])</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">//……</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//……</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">_MaxSmallSize</span> <span class="p">=</span> <span class="mi">32768</span>
+<span class="kd">const</span> <span class="nx">smallSizeMax</span> <span class="p">=</span> <span class="mi">1024</span>
+<span class="kd">const</span> <span class="nx">smallSizeDiv</span> <span class="p">=</span> <span class="mi">8</span>
+</code></pre></div>
+
+<p>很明显，我们最终将返回这个式子的结果：</p>
+<div class="highlight"><pre><span></span><code>class_to_size[size_to_class8[(size+smallSizeDiv-1)/smallSizeDiv]]
+</code></pre></div>
+
+<p>这是 <code>Go</code> 源码中有关内存分配的两个 <code>slice</code>。<code>class_to_size</code>通过 <code>spanClass</code>获取 <code>span</code>划分的 <code>object</code>大小。而 <code>size_to_class8</code> 表示通过 <code>size</code> 获取它的 <code>spanClass</code>。</p>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span> <span class="nx">size_to_class8</span> <span class="p">=</span> <span class="p">[</span><span class="nx">smallSizeMax</span><span class="o">/</span><span class="nx">smallSizeDiv</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="kt">uint8</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">class_to_size</span> <span class="p">=</span> <span class="p">[</span><span class="nx">_NumSizeClasses</span><span class="p">]</span><span class="kt">uint16</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">176</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">208</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">352</span><span class="p">,</span> <span class="mi">384</span><span class="p">,</span> <span class="mi">416</span><span class="p">,</span> <span class="mi">448</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">576</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">704</span><span class="p">,</span> <span class="mi">768</span><span class="p">,</span> <span class="mi">896</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1152</span><span class="p">,</span> <span class="mi">1280</span><span class="p">,</span> <span class="mi">1408</span><span class="p">,</span> <span class="mi">1536</span><span class="p">,</span> <span class="mi">1792</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">2304</span><span class="p">,</span> <span class="mi">2688</span><span class="p">,</span> <span class="mi">3072</span><span class="p">,</span> <span class="mi">3200</span><span class="p">,</span> <span class="mi">3456</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">4864</span><span class="p">,</span> <span class="mi">5376</span><span class="p">,</span> <span class="mi">6144</span><span class="p">,</span> <span class="mi">6528</span><span class="p">,</span> <span class="mi">6784</span><span class="p">,</span> <span class="mi">6912</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">9472</span><span class="p">,</span> <span class="mi">9728</span><span class="p">,</span> <span class="mi">10240</span><span class="p">,</span> <span class="mi">10880</span><span class="p">,</span> <span class="mi">12288</span><span class="p">,</span> <span class="mi">13568</span><span class="p">,</span> <span class="mi">14336</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="mi">18432</span><span class="p">,</span> <span class="mi">19072</span><span class="p">,</span> <span class="mi">20480</span><span class="p">,</span> <span class="mi">21760</span><span class="p">,</span> <span class="mi">24576</span><span class="p">,</span> <span class="mi">27264</span><span class="p">,</span> <span class="mi">28672</span><span class="p">,</span> <span class="mi">32768</span><span class="p">}</span>
+</code></pre></div>
+
+<p>我们传进去的 <code>size</code> 等于 40。所以 <code>(size+smallSizeDiv-1)/smallSizeDiv = 5</code>；获取 <code>size_to_class8</code> 数组中索引为 <code>5</code> 的元素为 <code>4</code>；获取 <code>class_to_size</code> 中索引为 <code>4</code> 的元素为 <code>48</code>。</p>
+<p>最终，新的 slice 的容量为 <code>6</code>：</p>
+<div class="highlight"><pre><span></span><code>newcap = int(capmem / ptrSize) // 6
+</code></pre></div>
+
+<p>至于，上面的两个<code>魔法数组</code>的由来，暂时就不展开了。</p>
+<h1 id="nil-slice-append">为什么 nil slice 可以直接 append<a class="headerlink" href="#nil-slice-append" title="Permanent link">&para;</a></h1>
+<p>其实 <code>nil slice</code> 或者 <code>empty slice</code> 都是可以通过调用 append 函数来获得底层数组的扩容。最终都是调用 <code>mallocgc</code> 来向 Go 的内存管理器申请到一块内存，然后再赋给原来的<code>nil slice</code> 或 <code>empty slice</code>，然后摇身一变，成为“真正”的 <code>slice</code> 了。</p>
+<h1 id="slice-slice">传 slice 和 slice 指针有什么区别<a class="headerlink" href="#slice-slice" title="Permanent link">&para;</a></h1>
+<p>前面我们说到，slice 其实是一个结构体，包含了三个成员：len, cap, array。分别表示切片长度，容量，底层数据的地址。</p>
+<p>当 slice 作为函数参数时，就是一个普通的结构体。其实很好理解：若直接传 slice，在调用者看来，实参 slice 并不会被函数中的操作改变；若传的是 slice 的指针，在调用者看来，是会被改变原 slice 的。</p>
+<p>值的注意的是，不管传的是 slice 还是 slice 指针，如果改变了 slice 底层数组的数据，会反应到实参 slice 的底层数据。为什么能改变底层数组的数据？很好理解：底层数据在 slice 结构体里是一个指针，仅管 slice 结构体自身不会被改变，也就是说底层数据地址不会被改变。 但是通过指向底层数据的指针，可以改变切片的底层数据，没有问题。</p>
+<p>通过 slice 的 array 字段就可以拿到数组的地址。在代码里，是直接通过类似 <code>s[i]=10</code> 这种操作改变 slice 底层数组元素值。</p>
+<p>另外，啰嗦一句，Go 语言的函数参数传递，只有值传递，没有引用传递。后面会再写一篇相关的文章，敬请期待。</p>
+<p>再来看一个年幼无知的代码片段：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="nx">f</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">f</span><span class="p">(</span><span class="nx">s</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// i只是一个副本，不能改变s中元素的值</span>
+    <span class="cm">/*for _, i := range s {</span>
+<span class="cm">        i++</span>
+<span class="cm">    }</span>
+<span class="cm">    */</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+        <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>运行一下，程序输出：</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">]</span>
+</code></pre></div>
+
+<p>果真改变了原始 slice 的底层数据。这里传递的是一个 slice 的副本，在 <code>f</code> 函数中，<code>s</code> 只是 <code>main</code> 函数中 <code>s</code> 的一个拷贝。在<code>f</code> 函数内部，对 <code>s</code> 的作用并不会改变外层 <code>main</code> 函数的 <code>s</code>。</p>
+<p>要想真的改变外层 <code>slice</code>，只有将返回的新的 slice 赋值到原始 slice，或者向函数传递一个指向 slice 的指针。我们再来看一个例子：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">myAppend</span><span class="p">(</span><span class="nx">s</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="c1">// 这里 s 虽然改变了，但并不会影响外层函数的 s</span>
+    <span class="nx">s</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">s</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">myAppendPtr</span><span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 会改变外层 s 本身</span>
+    <span class="o">*</span><span class="nx">s</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">s</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="nx">newS</span> <span class="o">:=</span> <span class="nx">myAppend</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">newS</span><span class="p">)</span>
+
+    <span class="nx">s</span> <span class="p">=</span> <span class="nx">newS</span>
+
+    <span class="nx">myAppendPtr</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>运行结果：</p>
+<div class="highlight"><pre><span></span><code>[1 1 1]
+[1 1 1 100]
+[1 1 1 100 100]
+</code></pre></div>
+
+<p><code>myAppend</code> 函数里，虽然改变了 <code>s</code>，但它只是一个值传递，并不会影响外层的 <code>s</code>，因此第一行打印出来的结果仍然是 <code>[1 1 1]</code>。</p>
+<p>而 <code>newS</code> 是一个新的 <code>slice</code>，它是基于 <code>s</code> 得到的。因此它打印的是追加了一个 <code>100</code> 之后的结果： <code>[1 1 1 100]</code>。</p>
+<p>最后，将 <code>newS</code> 赋值给了 <code>s</code>，<code>s</code> 这时才真正变成了一个新的slice。之后，再给 <code>myAppendPtr</code> 函数传入一个 <code>s 指针</code>，这回它真的被改变了：<code>[1 1 1 100 100]</code>。</p>
+<h1 id="_4">总结<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h1>
+<p>到此，关于 <code>slice</code> 的部分就讲完了，不知大家有没有看过瘾。我们最后来总结一下：</p>
+<ul>
+<li>切片是对底层数组的一个抽象，描述了它的一个片段。</li>
+<li>切片实际上是一个结构体，它有三个字段：长度，容量，底层数据的地址。</li>
+<li>多个切片可能共享同一个底层数组，这种情况下，对其中一个切片或者底层数组的更改，会影响到其他切片。</li>
+<li><code>append</code> 函数会在切片容量不够的情况下，调用 <code>growslice</code> 函数获取所需要的内存，这称为扩容，扩容会改变元素原来的位置。</li>
+<li>扩容策略并不是简单的扩为原切片容量的 <code>2</code> 倍或 <code>1.25</code> 倍，还有内存对齐的操作。扩容后的容量 &gt;= 原容量的 <code>2</code> 倍或 <code>1.25</code> 倍。</li>
+<li>当直接用切片作为函数参数时，可以改变切片的元素，不能改变切片本身；想要改变切片本身，可以将改变后的切片返回，函数调用者接收改变后的切片或者将切片指针作为函数参数。</li>
+</ul>
+<p><img alt="image-20191209172718584" src="../../assets/blog/image-20191209172718584.png" /></p>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../2019-12-09-go-yu-yan-can-shu-chuan-di-shi-chuan-zhi-hai-shi-chuan-yin-yong/" title="Go语言参数传递是传值还是传引用(转载)" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                Go语言参数传递是传值还是传引用(转载)
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../2019-12-10-shi-yong-ffmpeg-fen-li-shi-pin-liu-he-yin-pin-liu/" title="使用 ffmpeg 分离视频流和音频流(转载)" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                使用 ffmpeg 分离视频流和音频流(转载)
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
