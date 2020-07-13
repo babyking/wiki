@@ -1,4 +1,14 @@
 #    
+Ruby pbcopy and pbpaste def pbcopy(input)
+  str = input.to_s
+  IO.popen('pbcopy', 'w') { |f| f << str }
+  str
+end
+
+def pbpaste
+  `pbpaste`
+end
+___
 if [ $? -eq 0 ]; then
     echo "succeed"
 else
