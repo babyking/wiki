@@ -1,0 +1,10 @@
+body, input {
+    font-family:  "Microsoft YaHei", 微软雅黑, Arial, "Hiragino Sans GB", 冬青黑,SimSun, 宋体, Helvetica, Tahoma, "Arial sans-serif";
+    -webkit-text-size-adjust: none;
+}
+.md-typeset {
+    font-size: .8rem;
+    line-height: 1.9;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+}
