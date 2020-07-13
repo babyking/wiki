@@ -1,4 +1,6 @@
 #    
+alfred中的runscript 运行python,ruby只能运行系统自带的版本,如何使用指定的版本呢?
+___
 alfred的keyword可以是动态的吗?这样可以动态的增加一些wf
 ___
 typora命令行设置 `alias typora="open -a typora"`
