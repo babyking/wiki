@@ -1,4 +1,6 @@
 #    
+eval "$(pyenv init -)"
+___
 if [ $? -ne 0 ]; then
     echo "mkdocs build failed!"
 fi
