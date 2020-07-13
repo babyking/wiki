@@ -1,5 +1,9 @@
 #    
 if [ $? -ne 0 ]; then
+    echo "mkdocs build failed!"
+fi
+___
+if [ $? -ne 0 ]; then
     echo "failed"
 else
     echo "succeed"
