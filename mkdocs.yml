@@ -18,6 +18,8 @@ theme:
     #code: 'Ubuntu Mono'
   language: 'zh'
 
+extra_css:
+    - assets/css/extra.css
 #extra_javascript:
   #- 'js/cnzz-statistics.js'
 
