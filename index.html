@@ -2483,7 +2483,11 @@
                 
                 
                 <h1 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>eval "$(pyenv init -)"</p>
+<p>if [ $? -eq 0 ]; then
+    echo "succeed"
+else
+    echo "failed"
+fi</p>
 <hr />
 <p>if [ $? -ne 0 ]; then
     echo "mkdocs build failed!"
