@@ -1,4 +1,6 @@
 #    
+MacOS Big Sur 下解决 Karabiner-Elements 失效问题 http://machbbs.com/v2ex/152316
+___
 go中 的类型别名 `type byte=int8` 与 `type byte2 int8` 是不一样的.
 ___
 ruby URL 正则  ```ruby\n rg = /http(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%$#_]*)?/ \n```
