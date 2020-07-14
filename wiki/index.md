@@ -1,4 +1,6 @@
 #    
+go中 的类型别名 `type byte=int8` 与 `type byte2 int8` 是不一样的.
+___
 ruby URL 正则  ```ruby\n rg = /http(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%$#_]*)?/ \n```
 ___
 ruby中可以方便的获取shell的返回值  
