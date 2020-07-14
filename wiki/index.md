@@ -1,5 +1,10 @@
 #    
-ruby中可以方便的获取shell的返回值  ```ruby path=`pwd`  ```
+ruby URL 正则  ```ruby\n rg = /http(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%$#_]*)?/ \n```
+___
+ruby中可以方便的获取shell的返回值  
+```ruby
+path=`pwd`
+```
 ___
 Ruby pbcopy and pbpaste def pbcopy(input)
   str = input.to_s
