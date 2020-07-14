@@ -1,4 +1,6 @@
 #    
+ruby中可以方便的获取shell的返回值  ```ruby path=`pwd`  ```
+___
 Ruby pbcopy and pbpaste def pbcopy(input)
   str = input.to_s
   IO.popen('pbcopy', 'w') { |f| f << str }
