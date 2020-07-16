@@ -1,4 +1,6 @@
 #    
+golang中iota的全名（不是用法）是什么 这就是全名。 “iota”是希腊字母表中的字母。这是典型的数学符号
+___
 MacOS Big Sur 下解决 Karabiner-Elements 失效问题 http://machbbs.com/v2ex/152316
 ___
 go中 的类型别名 `type byte=int8` 与 `type byte2 int8` 是不一样的.
