@@ -1,4 +1,6 @@
 #    
+如何不靠运气变得富有(更新中) https://github.com/fat-garage/how-to-get-rich-without-getting-lucky
+___
 类型关心存储,接口关心做啥?
 ___
 `iota` 念 `一欧搭`
