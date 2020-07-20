@@ -1,4 +1,6 @@
 #    
+go中,nil是指针,切片,map及接口的零值
+___
 作者：Molho
 链接：https://www.zhihu.com/question/264270664/answer/280896102
 来源：知乎
