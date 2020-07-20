@@ -1,4 +1,6 @@
 #    
+增七度就是三个大三堆叠,没错就是一个八度.
+___
 go中,nil是指针,切片,map及接口的零值
 ___
 如何不靠运气变得富有(更新中) https://github.com/fat-garage/how-to-get-rich-without-getting-lucky
