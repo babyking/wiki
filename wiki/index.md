@@ -1,4 +1,6 @@
 #    
+Golang之旅 https://zhuanlan.zhihu.com/poloxue-go
+___
 下面总结一下在swift中类和结构体的不同点：
 不同点：1.类属于引用类型，结构体属于值类型
 2.类允许被继承，结构体不允许被继承
