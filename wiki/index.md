@@ -1,4 +1,6 @@
 #    
+计算两个音之间是几度很简单——从起始音唱到结束音，唱了几次就是几度。
+___
 mkdocs取消search `plugins: []`
 ___
 Golang之旅 https://zhuanlan.zhihu.com/poloxue-go
