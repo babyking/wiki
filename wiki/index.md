@@ -1,4 +1,6 @@
 #    
+jekyll 实时刷新网页 `jekyll s --livereload`
+___
 计算两个音之间是几度很简单——从起始音唱到结束音，唱了几次就是几度。
 ___
 mkdocs取消search `plugins: []`
