@@ -1,4 +1,10 @@
 #    
+S是Stanley Clarke
+
+M是Marcus Miller
+
+V是Victor Wooten
+___
 五线谱首调视唱,相邻的线或间是三度，隔开一线或间是五度，隔开两线或间是七度，以此为基础找四，六，八度，不用一个个数
 ___
 wiki_snippet
