@@ -1,4 +1,6 @@
 #    
+wiki_snippet
+___
 capslock切换输入法是苹果自带的输入法才有的功能选项
 ___
 jekyll 实时刷新网页 `jekyll s --livereload`
