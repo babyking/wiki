@@ -1,4 +1,6 @@
 #    
+alfred 中placeholder {snippet:[keyword]} ,其中keyword如果有重复的会选择最新创建的snippet
+___
 https://www.bjhjyd.gov.cn/index.html
 ___
 S是Stanley Clarke
