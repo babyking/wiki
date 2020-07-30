@@ -1,4 +1,6 @@
 #    
+alfred中每个对象有一个InBound Configuration来替代 External是个非常好的思路,有点类似语言中通过注解来暴露调用接口的意思:)
+___
 alfred 中placeholder {snippet:[keyword]} ,其中keyword如果有重复的会选择最新创建的snippet
 ___
 https://www.bjhjyd.gov.cn/index.html
